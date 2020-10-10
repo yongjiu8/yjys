@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <com.tencent.smtt.sdk.ui.dialog.widget.RoundImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:id="@+id/headImg"
+        android:src="@drawable/head"/>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="感谢陪伴"
+    android:id="@+id/qqname"
+    android:layout_marginTop="10dp"
+    android:textSize="30sp"
+    android:layout_gravity="center"
+    android:gravity="center_vertical|center_horizontal"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mSelect"
+        android:layout_marginTop="20dp"/>
+
+
+</LinearLayout>

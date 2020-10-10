@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:padding="10dp"
+    android:background="@color/colorPrimary"
+    android:clickable="true"
+    android:id="@+id/mSelect_item"
+    android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+                android:text="小明"
+            android:layout_gravity="center_vertical"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+            android:drawableRight="@drawable/right"
+                android:id="@+id/title"/>
+
+
+</LinearLayout>

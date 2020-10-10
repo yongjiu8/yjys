@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:title="首页"
+    android:id="@+id/homeitem"
+    android:checked="true"
+    android:icon="@drawable/home"/>
+
+    <item android:title="电影"
+        android:id="@+id/moveritem"
+        android:icon="@drawable/mover"/>
+
+    <item android:title="发现"
+        android:id="@+id/faxianitem"
+        android:icon="@drawable/faxian"/>
+
+    <item android:title="个人"
+        android:id="@+id/useritem"
+        android:icon="@drawable/user"/>
+</menu>

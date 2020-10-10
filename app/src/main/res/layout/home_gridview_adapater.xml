@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/gitem">
+    <LinearLayout
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:id="@+id/img"
+            android:scaleType="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="更新到了16集"
+            android:id="@+id/juJi"
+            android:textSize="12sp"
+            android:textColor="#ffffff"
+            android:layout_gravity="right"
+            android:background="#2A000000"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="-20dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:gravity="left|center_vertical"
+            android:text="电影标题"
+            android:layout_marginTop="8dp"
+            android:id="@+id/stitle"
+            android:ellipsize="middle"
+            android:textSize="15sp"
+            android:singleLine="true" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginTop="2dp"
+            android:gravity="left|center_vertical"
+            android:ellipsize="middle"
+            android:id="@+id/count"
+            android:text="描述信息"
+            android:singleLine="true"
+            android:textSize="10sp"/>
+
+    </LinearLayout>
+</LinearLayout>

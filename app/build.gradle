@@ -1,0 +1,97 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    signingConfigs {
+
+        release {
+            keyAlias 'jzdc'
+            keyPassword 'jzdc123456'
+            storeFile file('F:/jzdc.jks')
+            storePassword 'jzdc123456'
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.example.homebutton"
+        minSdkVersion 17
+        targetSdkVersion 29
+        versionCode 20201001
+        versionName "1.3"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        //添加此行
+        multiDexEnabled true
+
+        ndk {
+            //设置支持的SO库架构
+            abiFilters 'armeabi' , 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'com.android.support:design:29.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.5.0'
+    implementation 'org.jsoup:jsoup:1.13.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation'com.youth.banner:banner:1.4.10'
+
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-andx-11'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-andx-11'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    implementation "com.google.android.material:material:1.2.1"
+
+    implementation "com.androidkun:XTabLayout:1.1.3"
+
+    implementation 'com.alibaba:fastjson:1.2.73'
+    implementation 'com.alibaba:fastjson:1.1.71.android'
+
+    api 'com.tencent.tbs.tbssdk:sdk:43939'
+
+    // 友盟基础组件库（所有友盟业务SDK都依赖基础组件库）
+// OAID目前为目前国内市场主流的Android Q设备标识，可根据需要选择。
+    implementation "com.umeng.umsdk:common:9.1.0"
+    implementation "com.umeng.umsdk:asms:1.1.3" // asms包依赖(必选)
+    implementation "com.umeng.umsdk:crash:0.0.4" // native crash包依赖(必选)
+    implementation "com.umeng.umsdk:oaid_lenovo:1.0.0" // (可选)
+    implementation "com.umeng.umsdk:oaid_mi:1.0.0" // (可选)
+    implementation "com.umeng.umsdk:oaid_oppo:1.0.4" // (可选)
+    implementation "com.umeng.umsdk:oaid_vivo:1.0.0.1" // (可选)
+
+
+    //添加此行
+    implementation 'com.android.support:multidex:1.0.3'
+
+    implementation 'com.wang.avi:library:2.1.3'
+
+    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'//其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+}
