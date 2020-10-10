@@ -12,4 +12,4 @@ QQ登录
 相关的秘钥 在 appconfig里面配置
 
 效果展示：
-<img src="http://eonml.cn/zb_users/upload/2020/10/202010091340102934020.jpg" />
+<img src="http://eonml.cn/zb_users/upload/2020/10/202010091340103033654.jpg" />
