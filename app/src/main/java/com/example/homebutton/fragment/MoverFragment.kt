@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.viewpager.widget.ViewPager
 import com.androidkun.xtablayout.XTabLayout
+import com.example.homebutton.BaseActivity
 import com.example.homebutton.R
 import com.example.homebutton.Scanner
 import com.example.homebutton.adapter.FragmentAdapter
@@ -119,6 +120,7 @@ class MoverFragment() : Fragment() {
                         dataList.clear()
                         page=1
                         menuSelect = 0
+                        BaseActivity.loading(activity!!)
                         initData(baseUrl+"/list.php?rank=rankhot&cat=all&area=all&act=all&year=all&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
                     }
                     "电影" -> {
@@ -127,6 +129,7 @@ class MoverFragment() : Fragment() {
                         dataList.clear()
                         page=1
                         menuSelect = 1
+                        BaseActivity.loading(activity!!)
                         initData(baseUrl+"/list.php?rank=rankhot&cat=all&area=all&act=all&year=all&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
                     }
                     "综艺" -> {
@@ -135,6 +138,7 @@ class MoverFragment() : Fragment() {
                         dataList.clear()
                         page=1
                         menuSelect = 2
+                        BaseActivity.loading(activity!!)
                         initData(baseUrl+"/list.php?rank=rankhot&cat=all&area=all&act=all&year=all&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
                     }
                     "动漫" -> {
@@ -143,6 +147,7 @@ class MoverFragment() : Fragment() {
                         dataList.clear()
                         page=1
                         menuSelect = 3
+                        BaseActivity.loading(activity!!)
                         initData(baseUrl+"/list.php?rank=rankhot&cat=all&area=all&act=all&year=all&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
                     }
                 }
@@ -158,6 +163,7 @@ class MoverFragment() : Fragment() {
 
         })
         dataList.clear()
+        BaseActivity.loading(activity!!)
         initData(baseUrl+"/list.php?rank=rankhot&cat=all&area=all&act=all&year=all&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
 
     }
@@ -199,6 +205,8 @@ class MoverFragment() : Fragment() {
 
                         refresh?.finishRefresh(true)
                         refresh?.finishLoadMore(true)
+
+                        BaseActivity.closeLoading()
                     }
 
                 })
@@ -240,6 +248,8 @@ class MoverFragment() : Fragment() {
 
                         refresh?.finishRefresh(true)
                         refresh?.finishLoadMore(true)
+
+                        BaseActivity.closeLoading()
                     }
 
                 })
@@ -282,6 +292,8 @@ class MoverFragment() : Fragment() {
 
                         refresh?.finishRefresh(true)
                         refresh?.finishLoadMore(true)
+
+                        BaseActivity.closeLoading()
                     }
 
                 })
@@ -324,6 +336,8 @@ class MoverFragment() : Fragment() {
 
                         refresh?.finishRefresh(true)
                         refresh?.finishLoadMore(true)
+
+                        BaseActivity.closeLoading()
                     }
 
                 })

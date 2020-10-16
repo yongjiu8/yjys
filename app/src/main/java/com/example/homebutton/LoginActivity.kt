@@ -63,7 +63,7 @@ class LoginActivity : BaseActivity() {
 
         login.setOnClickListener {
 
-            loading()
+            loading(this)
 /*
 *   5.检测终端网络环境是否支持一键登录或者号码认证
 */

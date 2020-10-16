@@ -26,10 +26,10 @@
     app:xTabTextColor="#5B000000"
     app:xTabTextSize="15sp"
     />
-<View
+<!--<View
     android:layout_width="match_parent"
     android:layout_height="5dp"
-    android:background="@color/linesColor"/>
+    android:background="@color/linesColor"/>-->
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:layout_width="match_parent"

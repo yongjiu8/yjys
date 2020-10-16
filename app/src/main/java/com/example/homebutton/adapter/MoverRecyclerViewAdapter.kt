@@ -43,6 +43,8 @@ class MoverRecyclerViewAdapter(val context: Context,data: List<MoverCount>) :
         holder.homeItem.setOnClickListener {
             val intent = Intent(context,Play::class.java)
             intent.putExtra("url",dataList.get(position).url)
+            intent.putExtra("title",dataList.get(position).title)
+            intent.putExtra("img",dataList.get(position).img)
             val activity = context as Activity
             activity.startActivity(intent)
         }

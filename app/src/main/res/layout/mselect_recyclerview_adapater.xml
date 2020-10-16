@@ -2,10 +2,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
     android:padding="10dp"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/user_item_background"
     android:clickable="true"
     android:id="@+id/mSelect_item"
     android:orientation="horizontal">
@@ -16,8 +14,8 @@
                 android:text="小明"
             android:layout_gravity="center_vertical"
                 android:textSize="20sp"
-                android:textColor="#FFFFFF"
-            android:drawableRight="@drawable/right"
+                android:textColor="#000000"
+            android:drawableRight="@drawable/right_black"
                 android:id="@+id/title"/>
 
 

@@ -12,54 +12,87 @@
     android:id="@+id/title"
     android:layout_height="wrap_content"/>
 
-    <View
+    <!--<View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/linesColor"/>
+        android:background="@color/linesColor"/>-->
 
     <com.example.homebutton.myview.X5WebView
         android:layout_width="match_parent"
         android:layout_height="260dp"
         android:id="@+id/web" />
 
-    <View
+    <!--<View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/linesColor"/>
+        android:background="@color/linesColor"/>-->
     
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:padding="10dp"
         android:orientation="horizontal">
-        <TextView
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="线路："
-            android:textSize="20sp"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_gravity="center_horizontal|center_vertical"/>
+            android:layout_weight="2">
 
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="wrap_content"
-            android:background="@color/linesColor"
-            android:layout_height="match_parent"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="线路："
+                android:textSize="20sp"
+                android:gravity="left"
+                android:layout_gravity="center_horizontal|center_vertical"/>
 
-        <TextView
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="wrap_content"
+                android:background="@color/linesColor"
+                android:layout_gravity="left"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="播放源："
-            android:textSize="20sp"
-            android:layout_marginLeft="50dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_gravity="center_horizontal|center_vertical"/>
+            android:layout_weight="2">
 
-        <Spinner
-            android:id="@+id/spinner1"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="播放源："
+                android:textSize="20sp"
+                android:gravity="left"
+                android:layout_gravity="center_horizontal|center_vertical"/>
+
+            <Spinner
+                android:id="@+id/spinner1"
+                android:layout_width="wrap_content"
+                android:background="@color/linesColor"
+                android:layout_gravity="left"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:background="@color/linesColor"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:id="@+id/chang"
+                android:src="@drawable/shouchang_blue"/>
+
+        </LinearLayout>
+
+
+
     </LinearLayout>
 
     <View

@@ -22,7 +22,7 @@
             android:textColor="#5C020202"
             android:inputType="text"
             android:selectAllOnFocus="true"
-            android:gravity="center_horizontal|center_vertical"
+            android:gravity="center|center_vertical"
             android:background="@drawable/search_text"
             android:id="@+id/scan_edit"
             android:hint="全网影视任您搜索"

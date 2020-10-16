@@ -18,10 +18,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <View
+                <!--<View
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
-                    android:background="@color/linesColor"/>
+                    android:background="@color/linesColor"/>-->
 
                 <com.youth.banner.Banner
                     android:layout_width="match_parent"
@@ -29,10 +29,10 @@
                     android:id="@+id/home_banner"
                     />
 
-                <View
+                <!--<View
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
-                    android:background="@color/linesColor"/>
+                    android:background="@color/linesColor"/>-->
 
                 <com.example.homebutton.myviewgroup.HomeCountView
                     android:layout_width="match_parent"

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.example.homebutton.application.Application;
+import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
+import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
@@ -34,7 +36,19 @@ public class X5WebView extends WebView {
             //重新测量
             webView.measure(w, h);
         }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView webView, String s) {
+            if (s.indexOf(".gif")==-1){
+                return super.shouldInterceptRequest(webView, s);
+            }else {
+                return new WebResourceResponse(null,null,null);
+            }
+
+        }
     };
+
+
 
     @SuppressLint("SetJavaScriptEnabled")
     public X5WebView(Context context) {

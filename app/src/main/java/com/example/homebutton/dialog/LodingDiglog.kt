@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.example.homebutton.R
+import com.example.homebutton.utils.LoadDiglogList
 import com.wang.avi.AVLoadingIndicatorView
 import java.lang.Exception
 

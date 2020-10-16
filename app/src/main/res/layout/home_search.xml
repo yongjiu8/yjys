@@ -14,7 +14,7 @@
         android:gravity="center_horizontal|center_vertical"
         android:background="@drawable/search_text"
         android:text="全网影视任您搜" />
-    <TextView
+    <!--<TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="3"
@@ -22,6 +22,13 @@
         android:textColor="#ffffff"
         android:gravity="center_horizontal|center_vertical"
         android:background="@drawable/search_botton"
-        android:paddingLeft="20dp"
-        android:drawableLeft="@drawable/scanner" />
+        android:drawableRight="@drawable/scanner" />-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/search_botton"
+        android:src="@drawable/scanner"
+        android:padding="2dp"
+        android:scaleType="fitCenter"
+        android:layout_weight="3"/>
 </LinearLayout>

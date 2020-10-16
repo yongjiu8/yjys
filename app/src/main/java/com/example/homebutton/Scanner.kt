@@ -36,7 +36,7 @@ class Scanner : BaseActivity() {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         scan_bot.setOnClickListener {
-            loading()
+            loading(this)
             if(scan_edit.text.toString() == ""){
                 closeLoading()
                 Toast.makeText(baseContext, "请输入搜索内容", Toast.LENGTH_SHORT).show()

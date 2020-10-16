@@ -31,7 +31,9 @@ class MainActivity : BaseActivity() {
 
         //添加适配器
         val fragmentAdapter = FragmentAdapter(fragments, supportFragmentManager)
+        page.offscreenPageLimit = 3
         page.adapter=fragmentAdapter
+
 
         //item 点击事件
         but_home.setOnNavigationItemSelectedListener {

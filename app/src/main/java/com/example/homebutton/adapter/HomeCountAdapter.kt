@@ -58,6 +58,8 @@ class HomeCountAdapter(val context: Context,data1: List<MoverCount>) : BaseAdapt
             myHolder.gitem.setOnClickListener {
                 val intent = Intent(context, Play::class.java)
                 intent.putExtra("url",data.get(position).url)
+                intent.putExtra("title",data.get(position).title)
+                intent.putExtra("img",data.get(position).img)
                 val activity = context as Activity
                 activity.startActivity(intent)
             }

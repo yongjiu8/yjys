@@ -3,6 +3,7 @@ package com.example.homebutton
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import android.graphics.PixelFormat
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +19,7 @@ import com.alibaba.fastjson.JSONObject
 import com.example.homebutton.adapter.DramaRecyclerViewAdapter
 import com.example.homebutton.entity.Drama
 import com.example.homebutton.utils.MyCallBack
+import com.example.homebutton.utils.MyDb
 import com.example.homebutton.utils.Net
 import com.example.homebutton.utils.StringUtil
 import com.tencent.smtt.sdk.WebSettings
@@ -46,6 +48,9 @@ class Play : BaseActivity() {
     var dramaAdapter : DramaRecyclerViewAdapter? = null
 
     var url:String? = null
+    var title:String? = null
+    var img:String? = null
+    var myDb : SQLiteDatabase? = null
 
 
     companion object{
@@ -61,8 +66,41 @@ class Play : BaseActivity() {
         setContentView(R.layout.activity_play)
         supportActionBar?.hide()
         url = intent.getStringExtra("url").replace("//m.","//www.")
+        title = intent.getStringExtra("title")
+        img = intent.getStringExtra("img")
 
-        loading()
+        val db = MyDb(this, "myData.db", 1)
+        myDb = db?.writableDatabase
+
+        //添加历史记录
+        val rawQuery = myDb?.rawQuery("select id from history where title = ?", arrayOf(title))
+        if (rawQuery?.count == 0){
+            myDb?.execSQL("insert into history (title,img,url) values(?,?,?)", arrayOf(title,img,url))
+        }
+
+        //查询是否收藏
+        val rawQuery1 = myDb?.rawQuery("select id from favorites where title = ?", arrayOf(title))
+        if (rawQuery1?.count == 0){
+            chang.setImageResource(R.drawable.shouchang_blue)
+        }else{
+            chang.setImageResource(R.drawable.shouchang_yelow)
+        }
+
+        //收藏被点击
+        chang.setOnClickListener {
+            val rawQuery1 = myDb?.rawQuery("select id from favorites where title = ?", arrayOf(title))
+            if (rawQuery1?.count == 0){
+                myDb?.execSQL("insert into favorites (title,img,url) values(?,?,?)", arrayOf(title,img,url))
+                chang.setImageResource(R.drawable.shouchang_yelow)
+                Toast.makeText(activity, "收藏成功", Toast.LENGTH_SHORT).show()
+            }else{
+                myDb?.execSQL("delete from favorites where title=?", arrayOf(title))
+                chang.setImageResource(R.drawable.shouchang_blue)
+                Toast.makeText(activity, "已取消收藏", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        loading(this)
 
         val sharedPreferences = getSharedPreferences("data", 0)
         val string = sharedPreferences.getString("line",null)

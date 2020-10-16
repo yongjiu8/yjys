@@ -8,9 +8,11 @@
     <ImageView
         android:layout_width="35dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/back"
+        android:src="@drawable/left_white"
         android:id="@+id/imgback"
         android:scaleType="fitCenter"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:layout_weight="1"
         android:layout_height="35dp"/>
 
@@ -25,7 +27,7 @@
         android:textColor="#ffffff"
         android:text="标题"/>
 
-    <TextView
+    <!--<TextView
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_gravity="center_vertical"
@@ -34,5 +36,13 @@
         android:textSize="15sp"
         android:id="@+id/score"
         android:textColor="#ffffff"
-        android:text=""/>
+        android:text=""/>-->
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/setter"
+        android:id="@+id/setter"
+        android:scaleType="fitCenter"
+        android:layout_weight="1"
+        android:layout_height="35dp"/>
 </LinearLayout>

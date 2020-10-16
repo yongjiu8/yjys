@@ -105,6 +105,8 @@ class HomeFragment() : Fragment(){
             if (bannerDataUrl[it].indexOf("qhvideo") == -1){
                 val intent = Intent(context, Play::class.java)
                 intent.putExtra("url",bannerDataUrl[it])
+                intent.putExtra("img",bannerDataImg[it])
+                intent.putExtra("title",bannerDataTitle[it])
                 startActivity(intent)
             }
         }
@@ -126,8 +128,11 @@ class HomeFragment() : Fragment(){
         super.onStart()
 
         banner?.stopAutoPlay()
-        initBanner()
-        initCountData()
+
+        /*initBanner()
+        initCountData()*/
+
+        refresh?.autoRefresh()
 
     }
 
@@ -138,9 +143,9 @@ class HomeFragment() : Fragment(){
 
 
     fun initBanner(){
-        BaseActivity.loading()
         Net.get(AppConfig.mobileUrl, object : MyCallBack {
             override fun callBack(doc: Document?) {
+
                 if (doc == null){
                     return
                 }
@@ -194,6 +199,8 @@ class HomeFragment() : Fragment(){
     fun initCountData(){
         var ctitle = tvplay?.findViewById<TextView>(R.id.ctitle)
         ctitle?.setText("电视剧")
+        var img = tvplay?.findViewById<ImageView>(R.id.img)
+        img?.setImageResource(R.drawable.tv)
         tvplay?.findViewById<LinearLayout>(R.id.more)?.setOnClickListener {
             activity?.findViewById<ViewPager>(R.id.page)?.currentItem = 1
             activity?.findViewById<BottomNavigationView>(R.id.but_home)?.menu?.getItem(1)?.isChecked = true
@@ -211,6 +218,8 @@ class HomeFragment() : Fragment(){
 
         ctitle = film?.findViewById<TextView>(R.id.ctitle)
         ctitle?.setText("电影")
+        var img_film = film?.findViewById<ImageView>(R.id.img)
+        img_film?.setImageResource(R.drawable.mover_home)
         film?.findViewById<LinearLayout>(R.id.more)?.setOnClickListener {
             activity?.findViewById<ViewPager>(R.id.page)?.currentItem = 1
             activity?.findViewById<BottomNavigationView>(R.id.but_home)?.menu?.getItem(1)?.isChecked = true
@@ -226,6 +235,8 @@ class HomeFragment() : Fragment(){
 
         ctitle = variety?.findViewById<TextView>(R.id.ctitle)
         ctitle?.setText("综艺")
+        var img_variety = variety?.findViewById<ImageView>(R.id.img)
+        img_variety?.setImageResource(R.drawable.zongyi)
         variety?.findViewById<LinearLayout>(R.id.more)?.setOnClickListener {
             activity?.findViewById<ViewPager>(R.id.page)?.currentItem = 1
             activity?.findViewById<BottomNavigationView>(R.id.but_home)?.menu?.getItem(1)?.isChecked = true
@@ -241,6 +252,8 @@ class HomeFragment() : Fragment(){
 
         ctitle = juvenile?.findViewById<TextView>(R.id.ctitle)
         ctitle?.setText("少儿")
+        var img_juvenile = juvenile?.findViewById<ImageView>(R.id.img)
+        img_juvenile?.setImageResource(R.drawable.saoer)
         juvenile?.findViewById<LinearLayout>(R.id.more)?.setOnClickListener {
             activity?.findViewById<ViewPager>(R.id.page)?.currentItem = 1
             activity?.findViewById<BottomNavigationView>(R.id.but_home)?.menu?.getItem(1)?.isChecked = true
@@ -256,6 +269,8 @@ class HomeFragment() : Fragment(){
 
         ctitle = comic?.findViewById<TextView>(R.id.ctitle)
         ctitle?.setText("动漫")
+        var img_comic = comic?.findViewById<ImageView>(R.id.img)
+        img_comic?.setImageResource(R.drawable.dongman)
         comic?.findViewById<LinearLayout>(R.id.more)?.setOnClickListener {
             activity?.findViewById<ViewPager>(R.id.page)?.currentItem = 1
             activity?.findViewById<BottomNavigationView>(R.id.but_home)?.menu?.getItem(1)?.isChecked = true
