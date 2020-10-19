@@ -25,6 +25,9 @@ import com.example.homebutton.utils.Net
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
+import com.thecode.aestheticdialogs.AestheticDialog
+import com.thecode.aestheticdialogs.DialogStyle
+import com.thecode.aestheticdialogs.DialogType
 import com.youth.banner.Banner
 import com.youth.banner.BannerConfig
 import com.youth.banner.Transformer
@@ -146,7 +149,13 @@ class HomeFragment() : Fragment(){
         Net.get(AppConfig.mobileUrl, object : MyCallBack {
             override fun callBack(doc: Document?) {
 
-                if (doc == null){
+                if (doc == null || "".equals(doc.body().text())) {
+                    activity?.runOnUiThread {
+                        AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                            .setTitle("提示")
+                            .setMessage("加载失败！请检查您的网络")
+                            .show()
+                    }
                     return
                 }
                 val select = doc.getElementsByClass("swiper-wrapper")
@@ -158,18 +167,18 @@ class HomeFragment() : Fragment(){
                 bannerDataImg.clear()
                 bannerDataTitle.clear()
 
-                var i=0
-                for (img in imgs){
+                var i = 0
+                for (img in imgs) {
                     val img = img.attr("src").toString()
-                    Log.e("url输出：",img)
+                    Log.e("url输出：", img)
                     val url = urls[i].attr("href")
-                    Log.e("url输出：",url)
+                    Log.e("url输出：", url)
                     val title = urls[i].text()
-                    Log.e("url输出：",title)
+                    Log.e("url输出：", title)
                     bannerDataTitle.add(title)
                     bannerDataImg.add(img)
                     bannerDataUrl.add(url)
-                    i+=1
+                    i += 1
                 }
 
                 banner?.setImages(bannerDataImg)
@@ -180,6 +189,16 @@ class HomeFragment() : Fragment(){
                     banner?.start()
                 }
                 initdata(doc)
+            }
+
+            override fun callError() {
+                activity?.runOnUiThread {
+                    refresh?.finishRefresh(false)
+                    AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                        .setTitle("提示")
+                        .setMessage("加载失败！请检查您的网络")
+                        .show()
+                }
             }
         })
 
@@ -288,11 +307,6 @@ class HomeFragment() : Fragment(){
 
     fun initdata(doc: Document){
 
-        /*Net.get(AppConfig.mobileUrl, object : MyCallBack {
-            override fun callBack(doc: Document?) {*/
-                if (doc == null){
-                    return
-                }
                 data1.clear()
                 data2.clear()
                 data3.clear()
@@ -419,9 +433,6 @@ class HomeFragment() : Fragment(){
                     homeCountAdapter5?.notifyDataSetChanged()
                     refresh?.finishRefresh(true)
                 }
-
-          /*  }
-        })*/
 
     }
 

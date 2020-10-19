@@ -32,6 +32,9 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
+import com.thecode.aestheticdialogs.AestheticDialog
+import com.thecode.aestheticdialogs.DialogStyle
+import com.thecode.aestheticdialogs.DialogType
 import kotlinx.android.synthetic.main.home_gridview_adapater.*
 import org.jsoup.nodes.Document
 
@@ -173,9 +176,17 @@ class MoverFragment() : Fragment() {
             1 -> {
                 Net.get(url,object :MyCallBack{
                     override fun callBack(doc: Document?) {
-                        if (doc == null){
+
+                        if (doc == null || "".equals(doc.body().text())) {
+                            activity?.runOnUiThread {
+
                             refresh?.finishRefresh(false)
                             refresh?.finishLoadMore(false)
+                            AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                                .setTitle("提示")
+                                .setMessage("加载失败！请检查您的网络")
+                                .show()
+                            }
                             return
                         }
                         val home = doc.select(".s-tab-main")
@@ -209,6 +220,22 @@ class MoverFragment() : Fragment() {
                         BaseActivity.closeLoading()
                     }
 
+                    override fun callError() {
+                        activity?.runOnUiThread {
+                            refresh?.finishRefresh(false)
+                            refresh?.finishLoadMore(false)
+                            BaseActivity.closeLoading()
+                            AestheticDialog.Builder(
+                                BaseActivity.activity!!,
+                                DialogStyle.FLASH,
+                                DialogType.ERROR
+                            )
+                                .setTitle("提示")
+                                .setMessage("加载失败！请检查您的网络")
+                                .show()
+                        }
+                    }
+
                 })
             }
             2 -> {
@@ -216,11 +243,23 @@ class MoverFragment() : Fragment() {
                 Net.get(url,object :MyCallBack{
 
                     override fun callBack(doc: Document?) {
-                        if (doc == null){
-                            refresh?.finishRefresh(false)
-                            refresh?.finishLoadMore(false)
+
+                        if (doc == null || "".equals(doc.body().text())) {
+                            activity?.runOnUiThread {
+                                refresh?.finishRefresh(false)
+                                refresh?.finishLoadMore(false)
+                                AestheticDialog.Builder(
+                                    activity!!,
+                                    DialogStyle.FLASH,
+                                    DialogType.ERROR
+                                )
+                                    .setTitle("提示")
+                                    .setMessage("加载失败！请检查您的网络")
+                                    .show()
+                            }
                             return
                         }
+
                         val home = doc.select(".s-tab-main")
                         val titles = home[0].select(".s1")
                         val counts = home[0].select(".star")
@@ -250,6 +289,22 @@ class MoverFragment() : Fragment() {
                         refresh?.finishLoadMore(true)
 
                         BaseActivity.closeLoading()
+                    }
+
+                    override fun callError() {
+                        activity?.runOnUiThread {
+                            refresh?.finishRefresh(false)
+                            refresh?.finishLoadMore(false)
+                            BaseActivity.closeLoading()
+                            AestheticDialog.Builder(
+                                BaseActivity.activity!!,
+                                DialogStyle.FLASH,
+                                DialogType.ERROR
+                            )
+                                .setTitle("提示")
+                                .setMessage("加载失败！请检查您的网络")
+                                .show()
+                        }
                     }
 
                 })
@@ -260,11 +315,23 @@ class MoverFragment() : Fragment() {
                 Net.get(url,object :MyCallBack{
 
                     override fun callBack(doc: Document?) {
-                        if (doc == null){
-                            refresh?.finishRefresh(false)
-                            refresh?.finishLoadMore(false)
+
+                        if (doc == null || "".equals(doc.body().text())) {
+                            activity?.runOnUiThread {
+                                refresh?.finishRefresh(false)
+                                refresh?.finishLoadMore(false)
+                                AestheticDialog.Builder(
+                                    activity!!,
+                                    DialogStyle.FLASH,
+                                    DialogType.ERROR
+                                )
+                                    .setTitle("提示")
+                                    .setMessage("加载失败！请检查您的网络")
+                                    .show()
+                            }
                             return
                         }
+
                         val home = doc.select(".s-tab-main")
                         val titles = home[0].select(".s1")
                         val counts = home[0].select(".star")
@@ -296,6 +363,23 @@ class MoverFragment() : Fragment() {
                         BaseActivity.closeLoading()
                     }
 
+                    override fun callError() {
+                        activity?.runOnUiThread {
+                            refresh?.finishRefresh(false)
+                            refresh?.finishLoadMore(false)
+                            BaseActivity.closeLoading()
+                            AestheticDialog.Builder(
+                                BaseActivity.activity!!,
+                                DialogStyle.FLASH,
+                                DialogType.ERROR
+                            )
+                                .setTitle("提示")
+                                .setMessage("加载失败！请检查您的网络")
+                                .show()
+                        }
+                    }
+
+
                 })
 
             }
@@ -304,11 +388,23 @@ class MoverFragment() : Fragment() {
                 Net.get(url,object :MyCallBack{
 
                     override fun callBack(doc: Document?) {
-                        if (doc == null){
-                            refresh?.finishRefresh(false)
-                            refresh?.finishLoadMore(false)
+
+                        if (doc == null || "".equals(doc.body().text())) {
+                            activity?.runOnUiThread {
+                                refresh?.finishRefresh(false)
+                                refresh?.finishLoadMore(false)
+                                AestheticDialog.Builder(
+                                    activity!!,
+                                    DialogStyle.FLASH,
+                                    DialogType.ERROR
+                                )
+                                    .setTitle("提示")
+                                    .setMessage("加载失败！请检查您的网络")
+                                    .show()
+                            }
                             return
                         }
+
                         val home = doc.select(".s-tab-main")
                         val titles = home[0].select(".s1")
                         val counts = home[0].select(".star")
@@ -338,6 +434,22 @@ class MoverFragment() : Fragment() {
                         refresh?.finishLoadMore(true)
 
                         BaseActivity.closeLoading()
+                    }
+
+                    override fun callError() {
+                        activity?.runOnUiThread {
+                            refresh?.finishRefresh(false)
+                            refresh?.finishLoadMore(false)
+                            BaseActivity.closeLoading()
+                            AestheticDialog.Builder(
+                                BaseActivity.activity!!,
+                                DialogStyle.FLASH,
+                                DialogType.ERROR
+                            )
+                                .setTitle("提示")
+                                .setMessage("加载失败！请检查您的网络")
+                                .show()
+                        }
                     }
 
                 })

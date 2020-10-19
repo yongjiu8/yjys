@@ -17,12 +17,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.example.homebutton.adapter.DramaRecyclerViewAdapter
+import com.example.homebutton.config.AppConfig
 import com.example.homebutton.entity.Drama
 import com.example.homebutton.utils.MyCallBack
 import com.example.homebutton.utils.MyDb
 import com.example.homebutton.utils.Net
 import com.example.homebutton.utils.StringUtil
 import com.tencent.smtt.sdk.WebSettings
+import com.thecode.aestheticdialogs.AestheticDialog
+import com.thecode.aestheticdialogs.DialogStyle
+import com.thecode.aestheticdialogs.DialogType
 import kotlinx.android.synthetic.main.activity_play.*
 import kotlinx.android.synthetic.main.common_title.*
 import org.jsoup.Jsoup
@@ -35,7 +39,6 @@ import java.util.regex.Pattern
 
 class Play : BaseActivity() {
     val lineList = mutableListOf<String>("线路一","线路二","线路三")
-    val lineData = mutableListOf<String>("http://jsap.attakids.com/?url=","https://jiexi.380k.com/?url=","http://17kyun.com/api.php?url=")
     val yuanList = mutableListOf<String>()
     val yuandataList = mutableListOf<String>()
 
@@ -55,7 +58,7 @@ class Play : BaseActivity() {
 
     companion object{
         @JvmStatic
-        var nowLine = "http://jsap.attakids.com/?url="
+        var nowLine = AppConfig.lineData[0]
         @JvmStatic
         var nowDrama = ""
     }
@@ -108,21 +111,21 @@ class Play : BaseActivity() {
             centerList.clear()
             centerListData.clear()
             for (it in 0..2){
-                if (lineData[it].equals(string)){
+                if (AppConfig.lineData[it].equals(string)){
                     centerList.add(lineList[it])
-                    centerListData.add(lineData[it])
+                    centerListData.add(AppConfig.lineData[it])
                 }
             }
             for (it in 0..2){
-                if (!lineData[it].equals(string)){
+                if (!AppConfig.lineData[it].equals(string)){
                     centerList.add(lineList[it])
-                    centerListData.add(lineData[it])
+                    centerListData.add(AppConfig.lineData[it])
                 }
             }
             lineList.clear()
-            lineData.clear()
+            AppConfig.lineData.clear()
             for (it in 0..2){
-                lineData.add(centerListData[it])
+                AppConfig.lineData.add(centerListData[it])
                 lineList.add(centerList[it])
             }
         }
@@ -137,7 +140,7 @@ class Play : BaseActivity() {
                 position: Int,
                 id: Long
             ) {
-                nowLine = lineData[position]
+                nowLine = AppConfig.lineData[position]
                 web.loadUrl(nowLine+nowDrama)
                 val sharedPreferences = getSharedPreferences("data", 0).edit()
                 sharedPreferences.putString("line", nowLine)
@@ -162,11 +165,17 @@ class Play : BaseActivity() {
 
     fun getDetails(url :String){
         Net.get(url,object : MyCallBack{
-            @SuppressLint("WrongConstant")
+
             override fun callBack(doc: Document?) {
-               if (doc == null){
-                   return
-               }
+                if (doc == null || "".equals(doc.body().text())) {
+                    activity?.runOnUiThread {
+                        AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                            .setTitle("提示")
+                            .setMessage("加载失败！请检查您的网络")
+                            .show()
+                    }
+                    return
+                }
 
                 val split = url.split("/")
                 var flag = true
@@ -210,7 +219,7 @@ class Play : BaseActivity() {
 
 
                         val counts = doc.select(".item-desc")
-                        val count = counts[counts.size - 1].text()
+                        val count = counts[counts.size - 1].text().replace("<<收起","").replace("收起<<","")
                         Log.e("匹配",biaoTi)
                         Log.e("匹配",leiXing)
                         Log.e("匹配",nianDai)
@@ -246,7 +255,7 @@ class Play : BaseActivity() {
 
 
                         val counts = doc.select(".item-desc")
-                        val count = counts[counts.size - 1].text()
+                        val count = counts[counts.size - 1].text().replace("<<收起","").replace("收起<<","")
                         Log.e("匹配",biaoTi)
                         Log.e("匹配",leiXing)
                         Log.e("匹配",nianDai)
@@ -280,7 +289,7 @@ class Play : BaseActivity() {
 
 
                     val counts = doc.select(".item-desc")
-                    val count = counts[counts.size - 1].text()
+                    val count = counts[counts.size - 1].text().replace("<<收起","").replace("收起<<","")
                     Log.e("匹配",biaoTi)
                     Log.e("匹配",leiXing)
                     Log.e("匹配",nianDai)
@@ -378,7 +387,7 @@ class Play : BaseActivity() {
                             val url  = urls[i].attr("href")
                             Log.e("匹配",title)
                             Log.e("匹配",url)
-                            dramaBanner.add(Drama(title,url))
+                            dramaBanner.add(Drama(title,url,false))
                             dramaData.add(url)
                             i+=1
                         }
@@ -393,6 +402,9 @@ class Play : BaseActivity() {
                         }
 
                         activity?.runOnUiThread {
+                            if (dramaBanner.size > 0){
+                                dramaBanner[0].isSelected = true
+                            }
                             dramaAdapter = DramaRecyclerViewAdapter(context!!,dramaBanner,true)
                             drama.adapter = dramaAdapter
 
@@ -467,6 +479,16 @@ class Play : BaseActivity() {
 
             }
 
+            override fun callError() {
+                activity?.runOnUiThread {
+                    closeLoading()
+                    AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                        .setTitle("提示")
+                        .setMessage("加载失败！请检查您的网络")
+                        .show()
+                }
+            }
+
         })
 
     }
@@ -475,7 +497,13 @@ class Play : BaseActivity() {
     fun initTv(ensite :String,id : String , cat : String ){
         Net.get("https://www.360kan.com/cover/switchsitev2?site="+ensite+"&id="+id+"&category="+cat,object : MyCallBack{
             override fun callBack(doc: Document?) {
-                if (doc == null){
+                if (doc == null || "".equals(doc.body().text())) {
+                    activity?.runOnUiThread {
+                        AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                            .setTitle("提示")
+                            .setMessage("加载失败！请检查您的网络")
+                            .show()
+                    }
                     return
                 }
 
@@ -498,7 +526,7 @@ class Play : BaseActivity() {
                     val title = it.attr("data-num").replace("\\","").replace("\"","")
                     val url = it.attr("href").replace("\\","")
                     if (!url.equals("#")){
-                        dramaBanner.add(Drama(title,url))
+                        dramaBanner.add(Drama(title,url,false))
                         dramaData.add(url)
                         Log.e("剧集输出",title)
                         Log.e("剧集输出",url)
@@ -506,6 +534,9 @@ class Play : BaseActivity() {
                 }
 
                 activity?.runOnUiThread {
+                    if (dramaBanner.size > 0){
+                        dramaBanner[0].isSelected = true
+                    }
                     dramaAdapter?.notifyDataSetChanged()
                     nowDrama = dramaData[0]
                     web.loadUrl(nowLine+nowDrama)
@@ -516,6 +547,16 @@ class Play : BaseActivity() {
                 }
 
             }
+
+            override fun callError() {
+                activity?.runOnUiThread {
+                    closeLoading()
+                    AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                        .setTitle("提示")
+                        .setMessage("加载失败！请检查您的网络")
+                        .show()
+                }
+            }
         })
 
     }
@@ -523,7 +564,13 @@ class Play : BaseActivity() {
     fun initCommic(ensite :String,id : String , cat : String ){
         Net.get("https://www.360kan.com/cover/switchsitev2?site="+ensite+"&id="+id+"&category="+cat,object : MyCallBack{
             override fun callBack(doc: Document?) {
-                if (doc == null){
+                if (doc == null || "".equals(doc.body().text())) {
+                    activity?.runOnUiThread {
+                        AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                            .setTitle("提示")
+                            .setMessage("加载失败！请检查您的网络")
+                            .show()
+                    }
                     return
                 }
 
@@ -558,7 +605,7 @@ class Play : BaseActivity() {
                         .replace("data-daochu=to=youku","")
                     val url = it.attr("href").replace("\\","")
                     if (!url.equals("###") && !url.equals("")){
-                        dramaBanner.add(Drama(title,url))
+                        dramaBanner.add(Drama(title,url,false))
                         dramaData.add(url)
                         Log.e("剧集输出",title)
                         Log.e("剧集输出",url)
@@ -566,6 +613,9 @@ class Play : BaseActivity() {
                 }
 
                 activity?.runOnUiThread {
+                    if (dramaBanner.size > 0){
+                        dramaBanner[0].isSelected = true
+                    }
                     dramaAdapter?.notifyDataSetChanged()
                     nowDrama = dramaData[0]
                     web.loadUrl(nowLine+nowDrama)
@@ -575,6 +625,16 @@ class Play : BaseActivity() {
                     closeLoading()
                 }
 
+            }
+
+            override fun callError() {
+                activity?.runOnUiThread {
+                    closeLoading()
+                    AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                        .setTitle("提示")
+                        .setMessage("加载失败！请检查您的网络")
+                        .show()
+                }
             }
         })
 

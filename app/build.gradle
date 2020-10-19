@@ -39,11 +39,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            manifestPlaceholders = ["qqappid":"101904713"]
         }
 
         debug {
             signingConfig signingConfigs.release
+            manifestPlaceholders = ["qqappid":"101904713"]
         }
+
+
+
     }
 }
 
@@ -86,6 +91,11 @@ dependencies {
     implementation "com.umeng.umsdk:oaid_oppo:1.0.4" // (可选)
     implementation "com.umeng.umsdk:oaid_vivo:1.0.0.1" // (可选)
 
+    implementation  'com.umeng.umsdk:share-core:7.0.2'
+    implementation  'com.umeng.umsdk:share-board:7.0.2'
+    implementation  'com.umeng.umsdk:share-qq:7.0.2'
+    implementation  'com.umeng.umsdk:share-wx:7.0.2'
+
 
     //添加此行
     implementation 'com.android.support:multidex:1.0.3'
@@ -97,4 +107,7 @@ dependencies {
 
     //加载动画
     implementation 'com.kaopiz:kprogresshud:1.2.0'
+
+    //tips
+    implementation 'com.github.gabriel-TheCode:AestheticDialogs:1.3.3'
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.example.homebutton.application.Application;
+import com.example.homebutton.config.AppConfig;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.WebSettings;
@@ -39,11 +40,13 @@ public class X5WebView extends WebView {
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView webView, String s) {
-            if (s.indexOf(".gif")==-1){
-                return super.shouldInterceptRequest(webView, s);
-            }else {
-                return new WebResourceResponse(null,null,null);
+            for (String it : AppConfig.getCaoList()){
+                if (s.indexOf(it)!=-1){
+                    return new WebResourceResponse(null,null,null);
+                }
             }
+
+            return super.shouldInterceptRequest(webView, s);
 
         }
     };
@@ -73,7 +76,6 @@ public class X5WebView extends WebView {
         WebSettings webSetting = this.getSettings();
         webSetting.setJavaScriptEnabled(true);
         // 设置允许JS弹窗
-        webSetting.setJavaScriptCanOpenWindowsAutomatically(true);
         webSetting.setJavaScriptCanOpenWindowsAutomatically(true);
         webSetting.setAllowFileAccess(true);// 设置可以访问文件
         webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);// 排版适应屏幕

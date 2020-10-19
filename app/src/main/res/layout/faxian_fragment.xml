@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:numColumns="3"
-    android:background="#77FFFFFF"
+    android:background="#0C000000"
     android:verticalSpacing="10dp"
     android:horizontalSpacing="10dp"
     android:padding="15dp"

@@ -25,8 +25,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
         <activity android:name=".History"></activity>
+
         <activity android:name=".Favorites"></activity>
+
         <activity android:name=".TianQi" />
 
         <meta-data
@@ -56,6 +59,7 @@
             android:name="com.tencent.smtt.export.external.DexClassLoaderProviderService"
             android:label="dexopt"
             android:process=":dexopt" />
+
 
         <activity
             android:name="com.tencent.tauth.AuthActivity"
@@ -87,8 +91,14 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
+                android:resource="@xml/file_paths" />
         </provider>
+
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 </manifest>

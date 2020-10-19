@@ -31,11 +31,22 @@ class DramaRecyclerViewAdapter(val context: Context, data: List<Drama>,val isPlu
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder {
         var inflate:View? = null
         if (isPlus){
-            inflate = LayoutInflater.from(context)
-                .inflate(R.layout.drama_recyclerview_adapater_plus, parent, false)
+            if (viewType == 0){
+                inflate = LayoutInflater.from(context)
+                    .inflate(R.layout.drama_selected_recyclerview_adapater_plus, parent, false)
+            }else{
+                inflate = LayoutInflater.from(context)
+                    .inflate(R.layout.drama_recyclerview_adapater_plus, parent, false)
+            }
+
         }else{
-            inflate = LayoutInflater.from(context)
-                .inflate(R.layout.drama_recyclerview_adapater, parent, false)
+            if (viewType == 0){
+                inflate = LayoutInflater.from(context)
+                    .inflate(R.layout.drama_selected_recyclerview_adapater, parent, false)
+            }else {
+                inflate = LayoutInflater.from(context)
+                    .inflate(R.layout.drama_recyclerview_adapater, parent, false)
+            }
         }
 
         return MyHolder(inflate)
@@ -46,6 +57,15 @@ class DramaRecyclerViewAdapter(val context: Context, data: List<Drama>,val isPlu
         holder.drama_item.setOnClickListener {
             val activity = context as Activity
             val web = activity.findViewById<X5WebView>(R.id.web)
+
+            for (it in dataList){
+                it.isSelected = false
+            }
+
+            dataList[position].isSelected = true
+
+            notifyDataSetChanged()
+
             Play.nowDrama = dataList.get(position).url
             web.loadUrl(Play.nowLine +Play.nowDrama)
 
@@ -56,4 +76,11 @@ class DramaRecyclerViewAdapter(val context: Context, data: List<Drama>,val isPlu
         return dataList.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        if (dataList[position].isSelected){
+            return 0
+        }else{
+            return 1
+        }
+    }
 }

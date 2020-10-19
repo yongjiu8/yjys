@@ -9,6 +9,9 @@ import com.example.homebutton.adapter.ScannerGridViewAdapter
 import com.example.homebutton.entity.MoverCount
 import com.example.homebutton.utils.MyCallBack
 import com.example.homebutton.utils.Net
+import com.thecode.aestheticdialogs.AestheticDialog
+import com.thecode.aestheticdialogs.DialogStyle
+import com.thecode.aestheticdialogs.DialogType
 import kotlinx.android.synthetic.main.activity_scanner.*
 import kotlinx.android.synthetic.main.common_title.*
 import org.jsoup.nodes.Document
@@ -58,7 +61,13 @@ class Scanner : BaseActivity() {
        listData.clear()
        Net.get("https://so.360kan.com/index.php?kw=" + scan_edit.text,object : MyCallBack{
            override fun callBack(doc: Document?) {
-               if (doc == null){
+               if (doc == null || "".equals(doc.body().text())) {
+                   activity?.runOnUiThread {
+                       AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                           .setTitle("提示")
+                           .setMessage("加载失败！请检查您的网络")
+                           .show()
+                   }
                    return
                }
 
@@ -75,6 +84,16 @@ class Scanner : BaseActivity() {
                    closeLoading()
                }
 
+           }
+
+           override fun callError() {
+               activity?.runOnUiThread {
+                   closeLoading()
+                   AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                       .setTitle("提示")
+                       .setMessage("加载失败！请检查您的网络")
+                       .show()
+               }
            }
        })
 

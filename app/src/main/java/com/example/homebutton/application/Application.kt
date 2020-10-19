@@ -11,6 +11,7 @@ import com.tencent.smtt.sdk.QbSdk
 import com.tencent.tauth.Tencent
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
+import com.umeng.socialize.PlatformConfig
 import com.umeng.umverify.UMVerifyHelper
 import com.umeng.umverify.listener.UMTokenResultListener
 
@@ -76,6 +77,8 @@ class Application() : Application() {
     fun initUmeng(){
         UMConfigure.init(this, AppConfig.umengKey, "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
+        PlatformConfig.setQQZone("101904713","b6f2c0a1563a831aa7e6226ceebeeaaf")
+        PlatformConfig.setWeixin("wxb2099eb1aa488f90","070710a855f845539da659e5a9e5f037")
     }
 
 

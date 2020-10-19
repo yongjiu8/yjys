@@ -34,7 +34,10 @@ class UserFragment() : Fragment() {
     var mselect : RecyclerView? = null
     var mView : View? = null
     var gridView : GridView? =null
-    val data = listOf<String>("关于","退出")
+    val data = listOf<FaXian>(FaXian("分享",R.drawable.share),
+        FaXian("关于",R.drawable.jizhan),
+        FaXian("退出",R.drawable.wangguan))
+
     val datas = arrayListOf<FaXian>(
         FaXian("收藏",R.drawable.shouchang_white), FaXian("历史",
         R.drawable.lishi_white), FaXian("反馈",R.drawable.fankui_white)

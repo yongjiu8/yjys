@@ -16,12 +16,13 @@ class Net(){
             Thread(Runnable {
                 var body : Document? = null
                 try {
-                    body = Jsoup.connect(url).ignoreContentType(true).timeout(10000).get()
+                    body = Jsoup.connect(url).ignoreContentType(true).timeout(8000).get()
+                    callBack.callBack(body)
                 }catch (e : Exception){
+                    callBack.callError()
                     Log.e("网络请求异常：", e.stackTraceToString())
                 }finally {
-                    callBack.callBack(body)
-                    BaseActivity.closeLoading()
+
                 }
 
             }).start()
