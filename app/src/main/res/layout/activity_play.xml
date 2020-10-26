@@ -109,10 +109,16 @@
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="@color/linesColor"/>
+<!--    <Button
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="dianji"
+        android:id="@+id/dian"/>-->
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

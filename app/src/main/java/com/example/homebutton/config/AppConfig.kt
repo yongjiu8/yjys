@@ -1,5 +1,7 @@
 package com.example.homebutton.config
 
+import com.example.homebutton.entity.MusicList
+
 class AppConfig {
 
     companion object{
@@ -34,5 +36,11 @@ class AppConfig {
 
         @JvmStatic
         val caoList = mutableListOf<String>()
+
+        @JvmStatic
+        val domonUrl = "http://d.eonml.cn/api/yjys.txt"
+
+        @JvmStatic
+        var MusicDataList = mutableListOf<MusicList.DataBean.MusicListBean>()
     }
 }

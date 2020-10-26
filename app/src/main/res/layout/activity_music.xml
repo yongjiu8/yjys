@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".faxianui.MusicActivity"
+    android:orientation="vertical">
+
+    <include layout="@layout/common_title"/>
+
+    <com.androidkun.xtablayout.XTabLayout
+        android:id="@+id/tabSelect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:xTabDisplayNum="4"
+
+        app:xTabIndicatorColor="#03A9F4"
+        app:xTabIndicatorHeight="2dp"
+        app:xTabIndicatorWidth="25dp"
+
+        app:xTabMode="scrollable"
+
+        app:xTabSelectedTextColor="#03A9F4"
+        app:xTabSelectedTextSize="20sp"
+        app:xTabTextColor="#5B000000"
+        app:xTabTextSize="15sp"
+        />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ref">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/list"/>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+
+</LinearLayout>

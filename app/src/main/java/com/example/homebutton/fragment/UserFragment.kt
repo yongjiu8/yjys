@@ -1,6 +1,8 @@
 package com.example.homebutton.fragment
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.widget.Button
 import android.widget.GridView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,8 +37,8 @@ class UserFragment() : Fragment() {
     var mselect : RecyclerView? = null
     var mView : View? = null
     var gridView : GridView? =null
-    val data = listOf<FaXian>(FaXian("分享",R.drawable.share),
-        FaXian("关于",R.drawable.jizhan),
+    val data = listOf<FaXian>(FaXian("分享给朋友",R.drawable.share),
+        FaXian("永久社区官网",R.drawable.jizhan),
         FaXian("退出",R.drawable.wangguan))
 
     val datas = arrayListOf<FaXian>(
@@ -74,7 +77,12 @@ class UserFragment() : Fragment() {
                     startActivity(intent)
                 }
                 2 -> {
-
+                    if (isQQClientAvailable(context!!)) {
+                        val qqUrl = "mqqwpa://im/chat?chat_type=wpa&uin=2584059921&version=1"
+                        activity?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(qqUrl)))
+                    } else {
+                        Toast.makeText(context, "请安装QQ客户端", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -82,6 +90,21 @@ class UserFragment() : Fragment() {
 
 
         return mView
+    }
+
+    //检查QQ是否安装
+    fun isQQClientAvailable(context: Context): Boolean {
+        val packageManager = context.packageManager
+        val pinfo = packageManager.getInstalledPackages(0)
+        if (pinfo != null) {
+            for (i in pinfo.indices) {
+                val pn = pinfo[i].packageName
+                if (pn == "com.tencent.mobileqq") {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     override fun onStart() {

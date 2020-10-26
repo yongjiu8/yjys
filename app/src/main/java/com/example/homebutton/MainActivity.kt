@@ -96,7 +96,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initData() {
-        Net.get("https://www.eonml.cn/api/yjys.txt", object : MyCallBack {
+        Net.get(AppConfig.domonUrl, object : MyCallBack {
             override fun callBack(doc: Document?) {
                 if (doc != null && !"".equals(doc.body().toString())) {
                     AppConfig.lineData.clear()

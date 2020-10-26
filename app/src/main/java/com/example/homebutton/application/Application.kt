@@ -13,7 +13,6 @@ import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.socialize.PlatformConfig
 import com.umeng.umverify.UMVerifyHelper
-import com.umeng.umverify.listener.UMTokenResultListener
 
 
 class Application() : Application() {
@@ -71,6 +70,7 @@ class Application() : Application() {
         initUmeng()
 
         Bugly.init(applicationContext, AppConfig.bugId, false);
+
 
     }
 

@@ -25,11 +25,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
-        <activity android:name=".History"></activity>
-
-        <activity android:name=".Favorites"></activity>
-
+        <activity android:name=".faxianui.MusicPlayActivity"></activity>
+        <activity android:name=".faxianui.MusicActivity" />
+        <activity android:name=".History" />
+        <activity android:name=".Favorites" />
         <activity android:name=".TianQi" />
 
         <meta-data
@@ -59,7 +58,6 @@
             android:name="com.tencent.smtt.export.external.DexClassLoaderProviderService"
             android:label="dexopt"
             android:process=":dexopt" />
-
 
         <activity
             android:name="com.tencent.tauth.AuthActivity"

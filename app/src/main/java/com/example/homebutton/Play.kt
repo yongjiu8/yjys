@@ -161,6 +161,7 @@ class Play : BaseActivity() {
         drama.adapter = dramaAdapter
 
         getDetails(url!!)
+
     }
 
     fun getDetails(url :String){

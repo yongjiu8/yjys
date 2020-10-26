@@ -1,9 +1,9 @@
 package com.example.homebutton.adapter
 
-import android.R.attr.thumb
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homebutton.LoginActivity
 import com.example.homebutton.R
@@ -22,7 +23,6 @@ import com.umeng.socialize.UMShareListener
 import com.umeng.socialize.bean.SHARE_MEDIA
 import com.umeng.socialize.media.UMImage
 import com.umeng.socialize.media.UMWeb
-import kotlinx.android.synthetic.main.activity_play.*
 
 
 class MSelectRecyclerViewAdapter(val context: Context, data: List<FaXian>) :
@@ -39,7 +39,7 @@ class MSelectRecyclerViewAdapter(val context: Context, data: List<FaXian>) :
 
         override fun onError(p0: SHARE_MEDIA?, p1: Throwable?) {
             Toast.makeText(context, "分享出错", Toast.LENGTH_SHORT).show()
-            Log.e("分享",p1.toString())
+            Log.e("分享", p1.toString())
         }
 
         override fun onCancel(p0: SHARE_MEDIA?) {
@@ -62,6 +62,21 @@ class MSelectRecyclerViewAdapter(val context: Context, data: List<FaXian>) :
         return MyHolder(inflate)
     }
 
+    //检查QQ是否安装
+    fun isQQClientAvailable(context: Context): Boolean {
+        val packageManager = context.packageManager
+        val pinfo = packageManager.getInstalledPackages(0)
+        if (pinfo != null) {
+            for (i in pinfo.indices) {
+                val pn = pinfo[i].packageName
+                if (pn == "com.tencent.mobileqq") {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     override fun onBindViewHolder(holder: MyHolder, position: Int) {
         holder.title.setText(dataList.get(position).text)
         holder.img.setImageResource(dataList.get(position).img)
@@ -81,11 +96,16 @@ class MSelectRecyclerViewAdapter(val context: Context, data: List<FaXian>) :
                     web.description = AppConfig.shareCount //描述
                     ShareAction(context as Activity?)
                         .withMedia(web)
-                        .setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.WEIXIN)
+                        .setDisplayList(SHARE_MEDIA.QQ, SHARE_MEDIA.WEIXIN)
                         .setCallback(umShareListener)
                         .open();
                 }
                 1 -> {
+                    val uri: Uri = Uri.parse("https://www.eonml.cn")
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    context.startActivity(intent)
+                }
+                2 -> {
                     Application.mTencent?.logout(context)
                     val edit = context?.getSharedPreferences("token", 0)?.edit()
                     edit?.putString("key", "")
@@ -96,6 +116,7 @@ class MSelectRecyclerViewAdapter(val context: Context, data: List<FaXian>) :
             }
         }
     }
+
 
     override fun getItemCount(): Int {
         return dataList.size

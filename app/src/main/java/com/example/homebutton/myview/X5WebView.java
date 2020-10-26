@@ -3,9 +3,12 @@ package com.example.homebutton.myview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.KeyEvent;
 
 import com.example.homebutton.application.Application;
 import com.example.homebutton.config.AppConfig;
+import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.WebSettings;
@@ -49,6 +52,7 @@ public class X5WebView extends WebView {
             return super.shouldInterceptRequest(webView, s);
 
         }
+
     };
 
 

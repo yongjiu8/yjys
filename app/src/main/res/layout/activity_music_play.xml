@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".faxianui.MusicPlayActivity">
+
+    <include layout="@layout/common_title"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="500dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/geCi"
+            android:padding="10dp"
+            android:gravity="center"
+            android:textSize="20sp"/>
+
+    </ScrollView>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:max="100"
+        android:progress="0"
+        android:thumb="@drawable/jindu"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/jinDu"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:padding="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/start"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:gravity="left|center_vertical"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/end"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:gravity="right|center_vertical"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/showCi"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:textColor="#6200EA"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:padding="20dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/shang"
+            android:scaleType="center"
+            android:src="@drawable/shangyiqu"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/bo"
+            android:scaleType="center"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/zhanting"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/next"
+            android:scaleType="center"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/xiayiqu"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:padding="15dp"
+    android:clickable="true"
+    android:background="@drawable/common_click_background"
+    android:orientation="horizontal"
+    android:id="@+id/home">
+
+        <TextView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:text="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/number"
+            android:textSize="15sp"/>
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/img"
+            android:scaleType="fitXY"/>
+
+        <TextView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:text="1"
+            android:gravity="center_vertical|left"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/title"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:text="1"
+            android:gravity="center_vertical|left"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/geshou"
+            android:textSize="15sp"/>
+
+        <!--<TextView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:text="1"
+            android:gravity="center_vertical|left"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/zhuanji"
+            android:textSize="10sp"/>-->
+
+
+
+
+
+</LinearLayout>
