@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".faxianui.MusicScanerActivity">
+
+    <include layout="@layout/common_title"/>
+
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:background="#03A9F4"
+        android:padding="10dp"
+        android:layout_height="60dp">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:textColor="#5C020202"
+            android:inputType="text"
+            android:selectAllOnFocus="true"
+            android:gravity="center|center_vertical"
+            android:background="@drawable/search_text"
+            android:id="@+id/scan_edit"
+            android:hint="音乐搜索"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:gravity="center_horizontal|center_vertical"
+            android:background="@drawable/search_botton"
+            android:paddingLeft="20dp"
+            android:id="@+id/scan_bot"
+            android:drawableLeft="@drawable/scanner" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/linesColor"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/mlist"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>
