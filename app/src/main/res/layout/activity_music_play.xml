@@ -8,20 +8,33 @@
     tools:context=".faxianui.MusicPlayActivity">
 
     <include layout="@layout/common_title"/>
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="500dp">
 
-        <TextView
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/geCi"
-            android:padding="10dp"
-            android:gravity="center"
-            android:textSize="20sp"/>
+            android:layout_height="500dp"
+            android:layout_weight="1">
 
-    </ScrollView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/geCi"
+                android:padding="10dp"/>
+
+        </ScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:id="@+id/mlist"
+            android:visibility="gone"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
 
     <SeekBar
         android:layout_width="match_parent"
@@ -100,6 +113,26 @@
             android:scaleType="center"
             android:layout_marginLeft="10dp"
             android:src="@drawable/xiayiqu"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/xunhuan"
+            android:scaleType="center"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/danqu"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/liebiao"
+            android:scaleType="center"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/liebiao"
             android:layout_weight="1"
             />
 

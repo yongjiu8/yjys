@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#0C000000"
+    android:background="@drawable/user_home_background"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <include layout="@layout/common_title"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp"
-        android:background="@color/colorPrimary"
+        android:background="#00FFFFFF"
         android:orientation="vertical"
         android:layout_weight="2">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:background="@drawable/user_auto_backgroup">
 
             <com.tencent.smtt.sdk.ui.dialog.widget.RoundImageView
                 android:id="@+id/headImg"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                android:layout_marginTop="5dp"
                 android:layout_gravity="center"
                 android:scaleType="fitCenter"
-                android:src="@drawable/user" />
+                android:src="@drawable/user_frover" />
 
             <TextView
                 android:id="@+id/qqname"
@@ -31,36 +35,43 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="1dp"
-                android:textColor="#fff"
+                android:textColor="#000000"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="欢迎使用永久影视"
-                android:textSize="30sp" />
+                android:textSize="12sp" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <GridView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:numColumns="3"
-                android:background="@color/colorPrimary"
-                android:layout_gravity="bottom"
-                android:id="@+id/hoGrid"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#00FFFFFF"
+                android:layout_marginTop="25dp">
+
+                <GridView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:numColumns="3"
+                    android:layout_gravity="center_vertical"
+                    android:background="#00FFFFFF"
+                    android:id="@+id/hoGrid"/>
+
+            </LinearLayout>
 
         </LinearLayout>
+
 
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_weight="1"
+        android:id="@+id/mSelect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/mSelect"
-        android:background="@drawable/faxian_item_background"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="1"
+        android:background="@drawable/usershare_item_background"
         android:padding="10dp" />
 
 

@@ -3,25 +3,34 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
     buildToolsVersion "29.0.3"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
 
     signingConfigs {
 
         release {
-            keyAlias 'jzdc'
-            keyPassword 'jzdc123456'
-            storeFile file('F:/jzdc.jks')
-            storePassword 'jzdc123456'
+            keyAlias 'key0'
+            keyPassword 'chen.fd'
+            storeFile file('E:/myKeys/yjys.jks')
+            storePassword 'chen.fd'
         }
     }
 
     defaultConfig {
-        applicationId "com.example.homebutton"
+        applicationId "com.example.yjys"
         minSdkVersion 17
-        targetSdkVersion 29
-        versionCode 20201026
-        versionName "1.7"
+        targetSdkVersion 31
+        versionCode 20210901
+        versionName "2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -55,11 +64,11 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.3.1'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
-    implementation 'com.android.support:design:29.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.appcompat:appcompat:+'
+    implementation 'androidx.constraintlayout:constraintlayout:+'
+    implementation 'com.android.support:design:+'
+    implementation 'androidx.recyclerview:recyclerview:+'
     implementation 'com.github.bumptech.glide:glide:4.5.0'
     implementation 'org.jsoup:jsoup:1.13.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
@@ -79,22 +88,21 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.2.73'
     implementation 'com.alibaba:fastjson:1.1.71.android'
 
-    api 'com.tencent.tbs.tbssdk:sdk:43939'
+    implementation  'com.umeng.umsdk:common:9.4.2'// 必选
+    implementation  'com.umeng.umsdk:asms:1.4.1'// 必选
+    implementation 'com.umeng.umsdk:link:1.1.0'
+    implementation 'com.umeng.umsdk:apm:1.4.2' // 错误分析升级为独立SDK，看crash数据请一定集成，可选
+    implementation  'com.umeng.umsdk:abtest:1.0.0'//使用U-App中ABTest能力，可选
 
-    // 友盟基础组件库（所有友盟业务SDK都依赖基础组件库）
-// OAID目前为目前国内市场主流的Android Q设备标识，可根据需要选择。
-    implementation "com.umeng.umsdk:common:9.1.0"
-    implementation "com.umeng.umsdk:asms:1.1.3" // asms包依赖(必选)
-    implementation "com.umeng.umsdk:crash:0.0.4" // native crash包依赖(必选)
-    implementation "com.umeng.umsdk:oaid_lenovo:1.0.0" // (可选)
-    implementation "com.umeng.umsdk:oaid_mi:1.0.0" // (可选)
-    implementation "com.umeng.umsdk:oaid_oppo:1.0.4" // (可选)
-    implementation "com.umeng.umsdk:oaid_vivo:1.0.0.1" // (可选)
+    implementation  'com.umeng.umsdk:share-core:7.1.6'//分享核心库，必选
+    implementation  'com.umeng.umsdk:share-board:7.1.6'//分享面板功能，可选
 
-    implementation  'com.umeng.umsdk:share-core:7.0.2'
-    implementation  'com.umeng.umsdk:share-board:7.0.2'
-    implementation  'com.umeng.umsdk:share-qq:7.0.2'
-    implementation  'com.umeng.umsdk:share-wx:7.0.2'
+    implementation 'com.umeng.umsdk:share-wx:7.1.6' //微信完整版
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'//微信官方依赖库，必选
+
+    implementation 'com.umeng.umsdk:share-qq:7.1.6'//QQ完整版
+    implementation 'com.tencent.tauth:qqopensdk:3.53.0'//QQ官方依赖库，必选
+    implementation 'com.squareup.okhttp3:okhttp:3.12.12'//QQ SDK在3.53.0版本及以上时需要集成okhttp官方依赖库，必选
 
 
     //添加此行
@@ -114,5 +122,14 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.2.0'
 
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    //音乐播放缓存
+    implementation'com.danikula:videocache:2.7.0'
+
+    /*//recyclerview库
+    implementation 'com.github.momodae.RecyclerViewLibrary2:layoutmanager:1.0.1'
+    implementation 'com.github.momodae.RecyclerViewLibrary2:pulltorefresh:1.0.1'
+    implementation 'com.github.momodae.RecyclerViewLibrary2:adapter:1.0.1'
+    implementation 'com.github.momodae.RecyclerViewLibrary2:library:1.0.1'*/
 
 }
