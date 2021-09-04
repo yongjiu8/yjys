@@ -27,6 +27,9 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- 硬件加速对X5视频播放非常重要，建议开启 -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
     <application
         android:name="com.example.yjys.application.Application"
         android:allowBackup="true"
@@ -35,8 +38,14 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
-        <activity android:name="com.example.yjys.faxianui.MusicScanerActivity"></activity>
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m"
+        android:hardwareAccelerated="true"
+        >
+
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+        <activity android:name="com.example.yjys.faxianui.MusicScanerActivity" />
         <activity android:name="com.example.yjys.faxianui.MusicPlayActivity" />
         <activity android:name="com.example.yjys.faxianui.MusicActivity" />
         <activity android:name="com.example.yjys.History" />

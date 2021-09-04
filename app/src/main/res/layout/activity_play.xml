@@ -5,32 +5,26 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/playHome"
     tools:context=".Play">
 
 <com.example.yjys.myviewgroup.CommonTitle
     android:layout_width="match_parent"
-    android:id="@+id/title"
+    android:id="@+id/homeTitle"
     android:layout_height="wrap_content"/>
 
-    <!--<View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@color/linesColor"/>-->
 
     <com.example.yjys.myview.X5WebView
         android:layout_width="match_parent"
         android:layout_height="260dp"
         android:id="@+id/web" />
 
-    <!--<View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@color/linesColor"/>-->
     
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:padding="10dp"
+        android:id="@+id/playSelect"
         android:baselineAligned="false" android:orientation="horizontal">
 
         <LinearLayout
@@ -100,6 +94,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
+        android:id="@+id/view1"
         android:background="@color/linesColor"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -110,6 +105,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
+        android:id="@+id/view2"
         android:background="@color/linesColor"/>
 <!--    <Button
         android:layout_width="100dp"
@@ -119,6 +115,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
+        android:id="@+id/playMiaoShu"
         android:layout_height="match_parent">
 
         <TextView
