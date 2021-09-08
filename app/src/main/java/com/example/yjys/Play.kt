@@ -6,12 +6,13 @@ import android.content.pm.ActivityInfo
 import android.database.sqlite.SQLiteDatabase
 import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.WindowInsets
-import android.view.WindowManager
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -97,14 +98,37 @@ class Play : BaseActivity() {
 
                 (activity as Play).requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-                window.insetsController?.also {
-                    it.hide(WindowInsets.Type.statusBars())
-                    it.hide(WindowInsets.Type.navigationBars())
+                if (Build.VERSION.SDK_INT >= 30){
+                    window.insetsController?.also {
+                        it.hide(WindowInsets.Type.statusBars())
+                        it.hide(WindowInsets.Type.navigationBars())
+                    }
+                }else {
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        // 全屏显示，隐藏状态栏和导航栏，拉出状态栏和导航栏显示一会儿后消失。
+                        window.decorView.systemUiVisibility =
+                            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+                    } else {
+                        // 全屏显示，隐藏状态栏
+                        window.decorView.systemUiVisibility =
+                            View.SYSTEM_UI_FLAG_FULLSCREEN
+                    }
+
                 }
 
 
 
-                val layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+
+                val layoutParams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                )
 
 
                 p0?.layoutParams = layoutParams
@@ -119,10 +143,17 @@ class Play : BaseActivity() {
             @RequiresApi(Build.VERSION_CODES.R)
             override fun onHideCustomView() {
 
-                window.insetsController?.also {
-                    it.show(WindowInsets.Type.statusBars())
-                    it.show(WindowInsets.Type.navigationBars())
+                if (Build.VERSION.SDK_INT >= 30){
+                    window.insetsController?.also {
+                        it.show(WindowInsets.Type.statusBars())
+                        it.show(WindowInsets.Type.navigationBars())
+                    }
+                }else {
+
+                    window.decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE)
+
                 }
+
 
                 homeTitle[0].visibility = View.VISIBLE
 
@@ -155,7 +186,13 @@ class Play : BaseActivity() {
         //添加历史记录
         val rawQuery = myDb?.rawQuery("select id from history where title = ?", arrayOf(title))
         if (rawQuery?.count == 0){
-            myDb?.execSQL("insert into history (title,img,url) values(?,?,?)", arrayOf(title, img, url))
+            myDb?.execSQL(
+                "insert into history (title,img,url) values(?,?,?)", arrayOf(
+                    title,
+                    img,
+                    url
+                )
+            )
         }
 
         //查询是否收藏
@@ -168,9 +205,18 @@ class Play : BaseActivity() {
 
         //收藏被点击
         chang.setOnClickListener {
-            val rawQuery1 = myDb?.rawQuery("select id from favorites where title = ?", arrayOf(title))
+            val rawQuery1 = myDb?.rawQuery(
+                "select id from favorites where title = ?",
+                arrayOf(title)
+            )
             if (rawQuery1?.count == 0){
-                myDb?.execSQL("insert into favorites (title,img,url) values(?,?,?)", arrayOf(title, img, url))
+                myDb?.execSQL(
+                    "insert into favorites (title,img,url) values(?,?,?)", arrayOf(
+                        title,
+                        img,
+                        url
+                    )
+                )
                 chang.setImageResource(R.drawable.shouchang_yelow)
                 Toast.makeText(activity, "收藏成功", Toast.LENGTH_SHORT).show()
             }else{
@@ -196,10 +242,10 @@ class Play : BaseActivity() {
         spinner.adapter = arrayAdapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
             ) {
                 nowLine = AppConfig.lineData[position].url
                 if (nowDrama.indexOf("360kan.com") != -1) {
@@ -260,9 +306,9 @@ class Play : BaseActivity() {
                 if (doc == null || "".equals(doc.body().text())) {
                     activity?.runOnUiThread {
                         AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
-                                .setTitle("提示")
-                                .setMessage("加载失败！请检查您的网络")
-                                .show()
+                            .setTitle("提示")
+                            .setMessage("加载失败！请检查您的网络")
+                            .show()
                     }
                     return
                 }
@@ -309,7 +355,10 @@ class Play : BaseActivity() {
 
 
                         val counts = doc.select(".item-desc")
-                        val count = counts[counts.size - 1].text().replace("<<收起", "").replace("收起<<", "")
+                        val count = counts[counts.size - 1].text().replace("<<收起", "").replace(
+                            "收起<<",
+                            ""
+                        )
                         Log.e("匹配", biaoTi)
                         Log.e("匹配", leiXing)
                         Log.e("匹配", nianDai)
@@ -345,7 +394,10 @@ class Play : BaseActivity() {
 
 
                         val counts = doc.select(".item-desc")
-                        val count = counts[counts.size - 1].text().replace("<<收起", "").replace("收起<<", "")
+                        val count = counts[counts.size - 1].text().replace("<<收起", "").replace(
+                            "收起<<",
+                            ""
+                        )
                         Log.e("匹配", biaoTi)
                         Log.e("匹配", leiXing)
                         Log.e("匹配", nianDai)
@@ -380,9 +432,11 @@ class Play : BaseActivity() {
                     }
 
 
-
                     val counts = doc.select(".item-desc")
-                    val count = counts[counts.size - 1].text().replace("<<收起", "").replace("收起<<", "")
+                    val count = counts[counts.size - 1].text().replace("<<收起", "").replace(
+                        "收起<<",
+                        ""
+                    )
                     Log.e("匹配", biaoTi)
                     Log.e("匹配", leiXing)
                     Log.e("匹配", nianDai)
@@ -410,24 +464,29 @@ class Play : BaseActivity() {
 
 
                         activity?.runOnUiThread {
-                            val arrayAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, yuanList)
+                            val arrayAdapter = ArrayAdapter(
+                                context!!,
+                                android.R.layout.simple_spinner_item,
+                                yuanList
+                            )
                             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinner1.adapter = arrayAdapter
 
-                            spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                                override fun onItemSelected(
+                            spinner1.onItemSelectedListener =
+                                object : AdapterView.OnItemSelectedListener {
+                                    override fun onItemSelected(
                                         parent: AdapterView<*>?,
                                         view: View?,
                                         position: Int,
                                         id: Long
-                                ) {
-                                    initTv(yuandataList[position], ids, cat)
-                                }
+                                    ) {
+                                        initTv(yuandataList[position], ids, cat)
+                                    }
 
-                                override fun onNothingSelected(parent: AdapterView<*>?) {
+                                    override fun onNothingSelected(parent: AdapterView<*>?) {
 
+                                    }
                                 }
-                            }
                         }
 
 
@@ -444,30 +503,35 @@ class Play : BaseActivity() {
                         }
 
                         activity?.runOnUiThread {
-                            val arrayAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, yuanList)
+                            val arrayAdapter = ArrayAdapter(
+                                context!!,
+                                android.R.layout.simple_spinner_item,
+                                yuanList
+                            )
                             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinner1.adapter = arrayAdapter
 
-                            spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                                override fun onItemSelected(
+                            spinner1.onItemSelectedListener =
+                                object : AdapterView.OnItemSelectedListener {
+                                    override fun onItemSelected(
                                         parent: AdapterView<*>?,
                                         view: View?,
                                         position: Int,
                                         id: Long
-                                ) {
-                                    nowDrama = yuandataList[position]
-                                    if (nowDrama.indexOf("360kan.com") != -1) {
-                                        playDirect(nowDrama)
-                                    } else {
-                                        web.loadUrl(nowLine + nowDrama)
+                                    ) {
+                                        nowDrama = yuandataList[position]
+                                        if (nowDrama.indexOf("360kan.com") != -1) {
+                                            playDirect(nowDrama)
+                                        } else {
+                                            web.loadUrl(nowLine + nowDrama)
+                                        }
+
                                     }
 
-                                }
+                                    override fun onNothingSelected(parent: AdapterView<*>?) {
 
-                                override fun onNothingSelected(parent: AdapterView<*>?) {
-
+                                    }
                                 }
-                            }
                         }
 
                     }
@@ -504,24 +568,29 @@ class Play : BaseActivity() {
                             dramaAdapter = DramaRecyclerViewAdapter(context!!, dramaBanner, true)
                             drama.adapter = dramaAdapter
 
-                            val arrayAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, yuanList)
+                            val arrayAdapter = ArrayAdapter(
+                                context!!,
+                                android.R.layout.simple_spinner_item,
+                                yuanList
+                            )
                             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinner1.adapter = arrayAdapter
 
-                            spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                                override fun onItemSelected(
+                            spinner1.onItemSelectedListener =
+                                object : AdapterView.OnItemSelectedListener {
+                                    override fun onItemSelected(
                                         parent: AdapterView<*>?,
                                         view: View?,
                                         position: Int,
                                         id: Long
-                                ) {
+                                    ) {
 
+                                    }
+
+                                    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                                    }
                                 }
-
-                                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                                }
-                            }
                         }
 
                         activity?.runOnUiThread {
@@ -549,24 +618,29 @@ class Play : BaseActivity() {
 
 
                         activity?.runOnUiThread {
-                            val arrayAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, yuanList)
+                            val arrayAdapter = ArrayAdapter(
+                                context!!,
+                                android.R.layout.simple_spinner_item,
+                                yuanList
+                            )
                             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinner1.adapter = arrayAdapter
 
-                            spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                                override fun onItemSelected(
+                            spinner1.onItemSelectedListener =
+                                object : AdapterView.OnItemSelectedListener {
+                                    override fun onItemSelected(
                                         parent: AdapterView<*>?,
                                         view: View?,
                                         position: Int,
                                         id: Long
-                                ) {
-                                    initCommic(yuandataList[position], ids, cat)
-                                }
+                                    ) {
+                                        initCommic(yuandataList[position], ids, cat)
+                                    }
 
-                                override fun onNothingSelected(parent: AdapterView<*>?) {
+                                    override fun onNothingSelected(parent: AdapterView<*>?) {
 
+                                    }
                                 }
-                            }
                         }
 
 
@@ -578,9 +652,9 @@ class Play : BaseActivity() {
             override fun callError() {
                 activity?.runOnUiThread {
                     AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
-                            .setTitle("提示")
-                            .setMessage("加载失败！请检查您的网络")
-                            .show()
+                        .setTitle("提示")
+                        .setMessage("加载失败！请检查您的网络")
+                        .show()
                 }
             }
 
@@ -590,103 +664,109 @@ class Play : BaseActivity() {
 
 
     fun initTv(ensite: String, id: String, cat: String){
-        Net.get(activity!!, "https://www.360kan.com/cover/switchsitev2?site=" + ensite + "&id=" + id + "&category=" + cat, object : MyCallBack {
-            override fun callBack(doc: Document?) {
-                if (doc == null || "".equals(doc.body().text())) {
-                    activity?.runOnUiThread {
-                        AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+        Net.get(
+            activity!!,
+            "https://www.360kan.com/cover/switchsitev2?site=" + ensite + "&id=" + id + "&category=" + cat,
+            object : MyCallBack {
+                override fun callBack(doc: Document?) {
+                    if (doc == null || "".equals(doc.body().text())) {
+                        activity?.runOnUiThread {
+                            AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
                                 .setTitle("提示")
                                 .setMessage("加载失败！请检查您的网络")
                                 .show()
+                        }
+                        return
                     }
-                    return
-                }
 
-                dramaData.clear()
-                dramaBanner.clear()
-                val text: String = doc.body().html().replace("\\&quot;", "")
+                    dramaData.clear()
+                    dramaBanner.clear()
+                    val text: String = doc.body().html().replace("\\&quot;", "")
                         .replace("&gt;", "")
                         .replace("&lt;", "")
                         .replace("\\\"", "\"")
                         .replace("\\r", "")
-                Log.e("剧集输出", text)
-                val subString = StringUtil.getSubString(text, "data\":\"", "\",\"error")
-                Log.e("剧集输出", subString)
+                    Log.e("剧集输出", text)
+                    val subString = StringUtil.getSubString(text, "data\":\"", "\",\"error")
+                    Log.e("剧集输出", subString)
 
-                val parse = Jsoup.parse(subString)
-                val elementdt = parse.select(".num-tab-main")
-                val element = elementdt[elementdt.size - 1]
-                val titles = element.getElementsByTag("a")
-                for (it in titles) {
-                    val title = it.attr("data-num").replace("\\", "").replace("\"", "")
-                    val url = it.attr("href").replace("\\", "")
-                    if (!url.equals("#")) {
-                        dramaBanner.add(Drama(title, url, false))
-                        dramaData.add(url)
-                        Log.e("剧集输出", title)
-                        Log.e("剧集输出", url)
+                    val parse = Jsoup.parse(subString)
+                    val elementdt = parse.select(".num-tab-main")
+                    val element = elementdt[elementdt.size - 1]
+                    val titles = element.getElementsByTag("a")
+                    for (it in titles) {
+                        val title = it.attr("data-num").replace("\\", "").replace("\"", "")
+                        val url = it.attr("href").replace("\\", "")
+                        if (!url.equals("#")) {
+                            dramaBanner.add(Drama(title, url, false))
+                            dramaData.add(url)
+                            Log.e("剧集输出", title)
+                            Log.e("剧集输出", url)
+                        }
                     }
+
+                    activity?.runOnUiThread {
+                        if (dramaBanner.size > 0) {
+                            dramaBanner[0].isSelected = true
+                        }
+                        dramaAdapter?.notifyDataSetChanged()
+                        nowDrama = dramaData[0]
+                        if (nowDrama.indexOf("360kan.com") != -1) {
+                            playDirectByJuji(nowDrama, 0)
+                        } else {
+                            web.loadUrl(nowLine + nowDrama)
+                        }
+                    }
+
+
                 }
 
-                activity?.runOnUiThread {
-                    if (dramaBanner.size > 0) {
-                        dramaBanner[0].isSelected = true
-                    }
-                    dramaAdapter?.notifyDataSetChanged()
-                    nowDrama = dramaData[0]
-                    if (nowDrama.indexOf("360kan.com") != -1) {
-                        playDirectByJuji(nowDrama, 0)
-                    } else {
-                        web.loadUrl(nowLine + nowDrama)
-                    }
-                }
-
-
-            }
-
-            override fun callError() {
-                activity?.runOnUiThread {
-                    AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                override fun callError() {
+                    activity?.runOnUiThread {
+                        AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
                             .setTitle("提示")
                             .setMessage("加载失败！请检查您的网络")
                             .show()
+                    }
                 }
-            }
-        })
+            })
 
     }
 
     fun initCommic(ensite: String, id: String, cat: String){
-        Net.get(activity!!, "https://www.360kan.com/cover/switchsitev2?site=" + ensite + "&id=" + id + "&category=" + cat, object : MyCallBack {
-            override fun callBack(doc: Document?) {
-                if (doc == null || "".equals(doc.body().text())) {
-                    activity?.runOnUiThread {
-                        AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+        Net.get(
+            activity!!,
+            "https://www.360kan.com/cover/switchsitev2?site=" + ensite + "&id=" + id + "&category=" + cat,
+            object : MyCallBack {
+                override fun callBack(doc: Document?) {
+                    if (doc == null || "".equals(doc.body().text())) {
+                        activity?.runOnUiThread {
+                            AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
                                 .setTitle("提示")
                                 .setMessage("加载失败！请检查您的网络")
                                 .show()
+                        }
+                        return
                     }
-                    return
-                }
 
-                dramaData.clear()
-                dramaBanner.clear()
-                val text: String = doc.body().html().replace("\\&quot;", "")
+                    dramaData.clear()
+                    dramaBanner.clear()
+                    val text: String = doc.body().html().replace("\\&quot;", "")
                         .replace("&gt;", "")
                         .replace("&lt;", "")
                         .replace("\\\"", "\"")
                         .replace("\\r", "")
                         .replace("js-series-part\"", "js-series-part")
-                Log.e("剧集输出", text)
-                val subString = StringUtil.getSubString(text, "data\":\"", "\",\"error")
-                Log.e("剧集输出", subString)
+                    Log.e("剧集输出", text)
+                    val subString = StringUtil.getSubString(text, "data\":\"", "\",\"error")
+                    Log.e("剧集输出", subString)
 
-                val parse = Jsoup.parse(subString)
-                val elementdt = parse.select(".m-series-number-container")
-                val element = elementdt[elementdt.size - 1]
-                val titles = element.getElementsByTag("a")
-                for (it in titles) {
-                    val title = it.attr("data-num")
+                    val parse = Jsoup.parse(subString)
+                    val elementdt = parse.select(".m-series-number-container")
+                    val element = elementdt[elementdt.size - 1]
+                    val titles = element.getElementsByTag("a")
+                    for (it in titles) {
+                        val title = it.attr("data-num")
                             .replace("\\", "")
                             .replace("\"", "")
                             .replace("data-daochu=to=imgo", "")
@@ -698,40 +778,40 @@ class Play : BaseActivity() {
                             .replace("data-daochu=to=pptv", "")
                             .replace("data-daochu=to=tudou", "")
                             .replace("data-daochu=to=youku", "")
-                    val url = it.attr("href").replace("\\", "")
-                    if (!url.equals("###") && !url.equals("")) {
-                        dramaBanner.add(Drama(title, url, false))
-                        dramaData.add(url)
-                        Log.e("剧集输出", title)
-                        Log.e("剧集输出", url)
+                        val url = it.attr("href").replace("\\", "")
+                        if (!url.equals("###") && !url.equals("")) {
+                            dramaBanner.add(Drama(title, url, false))
+                            dramaData.add(url)
+                            Log.e("剧集输出", title)
+                            Log.e("剧集输出", url)
+                        }
                     }
+
+                    activity?.runOnUiThread {
+                        if (dramaBanner.size > 0) {
+                            dramaBanner[0].isSelected = true
+                        }
+                        dramaAdapter?.notifyDataSetChanged()
+                        nowDrama = dramaData[0]
+                        if (nowDrama.indexOf("360kan.com") != -1) {
+                            playDirectByJuji(nowDrama, 0)
+                        } else {
+                            web.loadUrl(nowLine + nowDrama)
+                        }
+                    }
+
+
                 }
 
-                activity?.runOnUiThread {
-                    if (dramaBanner.size > 0) {
-                        dramaBanner[0].isSelected = true
-                    }
-                    dramaAdapter?.notifyDataSetChanged()
-                    nowDrama = dramaData[0]
-                    if (nowDrama.indexOf("360kan.com") != -1) {
-                        playDirectByJuji(nowDrama, 0)
-                    } else {
-                        web.loadUrl(nowLine + nowDrama)
-                    }
-                }
-
-
-            }
-
-            override fun callError() {
-                activity?.runOnUiThread {
-                    AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                override fun callError() {
+                    activity?.runOnUiThread {
+                        AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
                             .setTitle("提示")
                             .setMessage("加载失败！请检查您的网络")
                             .show()
+                    }
                 }
-            }
-        })
+            })
 
     }
 
@@ -745,44 +825,47 @@ class Play : BaseActivity() {
 
                 var currentMinuteSends = System.currentTimeMillis()
                 Net.get(
-                        activity!!,
-                        "https://pfmg.funshion.com/v1/play/list?ctime=$currentMinuteSends&fudid=$currentMinuteSends&sdk_type=fmg-web-js&sdk_ver=0.0.2.8&uc=99&sdk_token=ZjhsOWtnbixyaHI0cGR3cHV3Z2p2Z2FxLDE2MzAzOTYxNDU2OTMsZDY1MDI0MmRkMjIwOGM4MjlkNTQwM2E0OTFhMzIzM2E=&ce_code=$ceCode&appid=rhr4pdwpuwgjvgaq&uid=",
-                        object : MyCallBack {
-                            override fun callBack(doc: Document?) {
-                                var textJson = doc?.body()?.text()
-                                val moverInfo = JSON.parseObject(textJson, MoverInfo::class.java)
-                                val playList = moverInfo.data.playList
-                                val infohash = playList.mp4H264[playList.mp4H264.size - 1].infohash
+                    activity!!,
+                    "https://pfmg.funshion.com/v1/play/list?ctime=$currentMinuteSends&fudid=$currentMinuteSends&sdk_type=fmg-web-js&sdk_ver=0.0.2.8&uc=99&sdk_token=ZjhsOWtnbixyaHI0cGR3cHV3Z2p2Z2FxLDE2MzAzOTYxNDU2OTMsZDY1MDI0MmRkMjIwOGM4MjlkNTQwM2E0OTFhMzIzM2E=&ce_code=$ceCode&appid=rhr4pdwpuwgjvgaq&uid=",
+                    object : MyCallBack {
+                        override fun callBack(doc: Document?) {
+                            var textJson = doc?.body()?.text()
+                            val moverInfo = JSON.parseObject(textJson, MoverInfo::class.java)
+                            val playList = moverInfo.data.playList
+                            val infohash = playList.mp4H264[playList.mp4H264.size - 1].infohash
 
-                                Net.get(activity!!,
-                                        "https://pfmg.funshion.com/v1/play/cdnurl?ctime=$currentMinuteSends&fudid=$currentMinuteSends&sdk_type=fmg-web-js&sdk_ver=0.0.2.8&uc=99&sdk_token=ZjhsOWtnbixyaHI0cGR3cHV3Z2p2Z2FxLDE2MzAzOTYxNDU2OTMsZDY1MDI0MmRkMjIwOGM4MjlkNTQwM2E0OTFhMzIzM2E=&ce_code=$ceCode&appid=rhr4pdwpuwgjvgaq&infohash=$infohash&uid=",
-                                        object : MyCallBack {
-                                            override fun callBack(doc: Document?) {
-                                                if (doc != null) {
-                                                    val text = doc.body().text()
-                                                    val urlsDTO =
-                                                            JSON.parseObject(text, MoverUrl::class.java)
-                                                    val playUrl = urlsDTO.cdnUrls[0].url
-                                                    activity?.runOnUiThread {
-                                                        web.loadUrl(playUrl)
-                                                    }
-
-                                                }
+                            Net.get(activity!!,
+                                "https://pfmg.funshion.com/v1/play/cdnurl?ctime=$currentMinuteSends&fudid=$currentMinuteSends&sdk_type=fmg-web-js&sdk_ver=0.0.2.8&uc=99&sdk_token=ZjhsOWtnbixyaHI0cGR3cHV3Z2p2Z2FxLDE2MzAzOTYxNDU2OTMsZDY1MDI0MmRkMjIwOGM4MjlkNTQwM2E0OTFhMzIzM2E=&ce_code=$ceCode&appid=rhr4pdwpuwgjvgaq&infohash=$infohash&uid=",
+                                object : MyCallBack {
+                                    override fun callBack(doc: Document?) {
+                                        if (doc != null) {
+                                            val text = doc.body().text()
+                                            val urlsDTO =
+                                                JSON.parseObject(
+                                                    text,
+                                                    MoverUrl::class.java
+                                                )
+                                            val playUrl = urlsDTO.cdnUrls[0].url
+                                            activity?.runOnUiThread {
+                                                web.loadUrl(playUrl)
                                             }
 
-                                            override fun callError() {
-
-                                            }
                                         }
-                                )
+                                    }
 
-                            }
+                                    override fun callError() {
 
-                            override fun callError() {
-
-                            }
+                                    }
+                                }
+                            )
 
                         }
+
+                        override fun callError() {
+
+                        }
+
+                    }
                 )
 
             }
@@ -804,44 +887,47 @@ class Play : BaseActivity() {
                 val ceCode = ceCodes[position]
                 var currentMinuteSends = System.currentTimeMillis()
                 Net.get(
-                        activity!!,
-                        "https://pfmg.funshion.com/v1/play/list?ctime=$currentMinuteSends&fudid=$currentMinuteSends&sdk_type=fmg-web-js&sdk_ver=0.0.2.8&uc=99&sdk_token=ZjhsOWtnbixyaHI0cGR3cHV3Z2p2Z2FxLDE2MzAzOTYxNDU2OTMsZDY1MDI0MmRkMjIwOGM4MjlkNTQwM2E0OTFhMzIzM2E=&ce_code=$ceCode&appid=rhr4pdwpuwgjvgaq&uid=",
-                        object : MyCallBack {
-                            override fun callBack(doc: Document?) {
-                                var textJson = doc?.body()?.text()
-                                val moverInfo = JSON.parseObject(textJson, MoverInfo::class.java)
-                                val playList = moverInfo.data.playList
-                                val infohash = playList.mp4H264[playList.mp4H264.size - 1].infohash
+                    activity!!,
+                    "https://pfmg.funshion.com/v1/play/list?ctime=$currentMinuteSends&fudid=$currentMinuteSends&sdk_type=fmg-web-js&sdk_ver=0.0.2.8&uc=99&sdk_token=ZjhsOWtnbixyaHI0cGR3cHV3Z2p2Z2FxLDE2MzAzOTYxNDU2OTMsZDY1MDI0MmRkMjIwOGM4MjlkNTQwM2E0OTFhMzIzM2E=&ce_code=$ceCode&appid=rhr4pdwpuwgjvgaq&uid=",
+                    object : MyCallBack {
+                        override fun callBack(doc: Document?) {
+                            var textJson = doc?.body()?.text()
+                            val moverInfo = JSON.parseObject(textJson, MoverInfo::class.java)
+                            val playList = moverInfo.data.playList
+                            val infohash = playList.mp4H264[playList.mp4H264.size - 1].infohash
 
-                                Net.get(activity!!,
-                                        "https://pfmg.funshion.com/v1/play/cdnurl?ctime=$currentMinuteSends&fudid=$currentMinuteSends&sdk_type=fmg-web-js&sdk_ver=0.0.2.8&uc=99&sdk_token=ZjhsOWtnbixyaHI0cGR3cHV3Z2p2Z2FxLDE2MzAzOTYxNDU2OTMsZDY1MDI0MmRkMjIwOGM4MjlkNTQwM2E0OTFhMzIzM2E=&ce_code=$ceCode&appid=rhr4pdwpuwgjvgaq&infohash=$infohash&uid=",
-                                        object : MyCallBack {
-                                            override fun callBack(doc: Document?) {
-                                                if (doc != null) {
-                                                    val text = doc.body().text()
-                                                    val urlsDTO =
-                                                            JSON.parseObject(text, MoverUrl::class.java)
-                                                    val playUrl = urlsDTO.cdnUrls[0].url
-                                                    activity?.runOnUiThread {
-                                                        web.loadUrl(playUrl)
-                                                    }
-
-                                                }
+                            Net.get(activity!!,
+                                "https://pfmg.funshion.com/v1/play/cdnurl?ctime=$currentMinuteSends&fudid=$currentMinuteSends&sdk_type=fmg-web-js&sdk_ver=0.0.2.8&uc=99&sdk_token=ZjhsOWtnbixyaHI0cGR3cHV3Z2p2Z2FxLDE2MzAzOTYxNDU2OTMsZDY1MDI0MmRkMjIwOGM4MjlkNTQwM2E0OTFhMzIzM2E=&ce_code=$ceCode&appid=rhr4pdwpuwgjvgaq&infohash=$infohash&uid=",
+                                object : MyCallBack {
+                                    override fun callBack(doc: Document?) {
+                                        if (doc != null) {
+                                            val text = doc.body().text()
+                                            val urlsDTO =
+                                                JSON.parseObject(
+                                                    text,
+                                                    MoverUrl::class.java
+                                                )
+                                            val playUrl = urlsDTO.cdnUrls[0].url
+                                            activity?.runOnUiThread {
+                                                web.loadUrl(playUrl)
                                             }
 
-                                            override fun callError() {
-
-                                            }
                                         }
-                                )
+                                    }
 
-                            }
+                                    override fun callError() {
 
-                            override fun callError() {
-
-                            }
+                                    }
+                                }
+                            )
 
                         }
+
+                        override fun callError() {
+
+                        }
+
+                    }
                 )
 
             }

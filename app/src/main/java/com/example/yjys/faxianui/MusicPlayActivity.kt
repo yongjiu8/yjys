@@ -482,6 +482,18 @@ class MusicPlayActivity : BaseActivity() {
                     Log.e("音乐输出", data)
                     val musicData = Gson().fromJson(data, Lyric::class.java)
 
+                    if (musicData.data == null) {
+                        AestheticDialog.Builder(
+                                activity!!,
+                                DialogStyle.FLASH,
+                                DialogType.ERROR
+                        )
+                                .setTitle("警告")
+                                .setMessage("歌词加载失败！请检查您的网络后重试")
+                                .show()
+                        return
+                    }
+
                     activity?.runOnUiThread {
                         lrclist.clear()
                         lrclist.addAll(musicData.data.lrclist)
