@@ -8,11 +8,13 @@ class MyDb(val context: Context,name: String ,version: Int) : SQLiteOpenHelper(c
     private val tableSql = "create table history (id integer primary key autoincrement," +
             "title text," +
             "img text," +
-            "url text)"
+            "url text," +
+            "cattype text)"
     private val tableFavoritesSql = "create table favorites (id integer primary key autoincrement," +
             "title text," +
             "img text," +
-            "url text)"
+            "url text," +
+            "cattype text)"
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(tableSql)
         db?.execSQL(tableFavoritesSql)

@@ -45,6 +45,7 @@ class MoverRecyclerViewAdapter(val context: Context,data: List<MoverCount>) :
             intent.putExtra("url",dataList.get(position).url)
             intent.putExtra("title",dataList.get(position).title)
             intent.putExtra("img",dataList.get(position).img)
+            intent.putExtra("type",dataList.get(position).type)
             val activity = context as Activity
             activity.startActivity(intent)
         }

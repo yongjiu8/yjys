@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <include layout="@layout/home_search"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

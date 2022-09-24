@@ -24,7 +24,6 @@ import com.umeng.umverify.listener.UMTokenResultListener
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : BaseActivity() {
-
     var mqqListener : IUiListener? = null
     var activity: Activity? = null
 

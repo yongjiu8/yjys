@@ -10,32 +10,44 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alibaba.fastjson.JSON
 import com.androidkun.xtablayout.XTabLayout
 import com.example.yjys.R
 import com.example.yjys.Scanner
 import com.example.yjys.adapter.MoverRecyclerViewAdapter
 import com.example.yjys.config.AppConfig
+import com.example.yjys.entity.AutoType
+import com.example.yjys.entity.DongManDto
 import com.example.yjys.entity.MoverCount
+import com.example.yjys.entity.MoverDto
+import com.example.yjys.entity.TvDto
+import com.example.yjys.entity.ZongYiDto
 import com.example.yjys.myview.CategoryView
+import com.example.yjys.utils.JsonFileUtil
 import com.example.yjys.utils.MyCallBack
 import com.example.yjys.utils.Net
+import com.google.gson.Gson
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
+import com.tencent.smtt.sdk.WebChromeClient
+import com.tencent.smtt.sdk.WebView
 import com.thecode.aestheticdialogs.AestheticDialog
 import com.thecode.aestheticdialogs.DialogStyle
 import com.thecode.aestheticdialogs.DialogType
+import kotlinx.android.synthetic.main.activity_play.*
 import org.jsoup.nodes.Document
+import java.nio.charset.Charset
 
 class MoverFragment() : Fragment() {
 
-    val strList = arrayListOf<String>("电视剧","电影","综艺","动漫")
+    val strList = arrayListOf<String>("电视剧", "电影", "综艺", "动漫")
 
-    var tabMenu : XTabLayout? = null
+    var tabMenu: XTabLayout? = null
 
-    var moverList : RecyclerView? = null
-    var refresh : SmartRefreshLayout? = null
+    var moverList: RecyclerView? = null
+    var refresh: SmartRefreshLayout? = null
 
     var tabSelected = 1
 
@@ -47,49 +59,51 @@ class MoverFragment() : Fragment() {
 
     var moverRecyclerViewAdapter: MoverRecyclerViewAdapter? = null
 
-    var baseUrl = AppConfig.pcUrl+"/dianshi"
+    var baseUrl = AppConfig.pcUrl + "/v1/filter/list"
 
-    var inflate : View? = null
+    var inflate: View? = null
 
-    var botScanner : LinearLayout? =null
+    var botScanner: LinearLayout? = null
 
-    var catid : CategoryView? =null
-    var yearid : CategoryView? =null
-    var areaid : CategoryView? =null
-    var actid : CategoryView? =null
+    var catid: CategoryView? = null
+    var yearid: CategoryView? = null
+    var areaid: CategoryView? = null
+    var actid: CategoryView? = null
 
-    var mcatid : CategoryView? =null
-    var myearid : CategoryView? =null
-    var mareaid : CategoryView? =null
-    var mactid : CategoryView? =null
+    var mcatid: CategoryView? = null
+    var myearid: CategoryView? = null
+    var mareaid: CategoryView? = null
+    var mactid: CategoryView? = null
 
-    var zcatid : CategoryView? =null
-    var zactid : CategoryView? =null
-    var zareaid : CategoryView? =null
+    var zcatid: CategoryView? = null
+    var zactid: CategoryView? = null
+    var zareaid: CategoryView? = null
 
-    var dcatid : CategoryView? =null
-    var dyearid : CategoryView? =null
-    var dareaid : CategoryView? =null
+    var dcatid: CategoryView? = null
+    var dyearid: CategoryView? = null
+    var dareaid: CategoryView? = null
 
-    var filterButton : ImageView ? = null
+    var filterButton: ImageView? = null
 
-    val cats = mutableMapOf<String,String>()
+    val cats = mutableMapOf<String, String>()
 
-    val years = mutableMapOf<String,String>()
+    val years = mutableMapOf<String, String>()
 
-    val areas = mutableMapOf<String,String>()
+    val areas = mutableMapOf<String, String>()
 
-    val acts = mutableMapOf<String,String>()
+    val acts = mutableMapOf<String, String>()
 
-    var cat = "all"
-    var year = "all"
-    var area = "all"
-    var act = "all"
+    var cat = ""
+    var year = ""
+    var area = ""
+    var act = ""
 
-    var tv:LinearLayout? = null
-    var mv:LinearLayout? = null
-    var zv:LinearLayout? = null
-    var dv:LinearLayout? = null
+    var tv: LinearLayout? = null
+    var mv: LinearLayout? = null
+    var zv: LinearLayout? = null
+    var dv: LinearLayout? = null
+
+    var categoryId: Int = 2
 
 
     //是否可见
@@ -102,7 +116,10 @@ class MoverFragment() : Fragment() {
         super.setUserVisibleHint(isVisibleToUser)
         this.isVisibleToUser = isVisibleToUser
         if (isVisibleToUser && isInit) {
-            initData("$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+            initData(
+                "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                tabSelected
+            )
         }
     }
 
@@ -111,7 +128,7 @@ class MoverFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if (inflate == null){
+        if (inflate == null) {
             inflate = inflater.inflate(R.layout.mover_fragment, container, false)
         }
         tabMenu = inflate?.findViewById(R.id.tabMenu)
@@ -163,7 +180,7 @@ class MoverFragment() : Fragment() {
         mvFlag = true
         zvFlag = true
         dvFlag = true
-        val linearLayoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
+        val linearLayoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         moverList?.layoutManager = linearLayoutManager
         moverRecyclerViewAdapter = MoverRecyclerViewAdapter(requireActivity(), dataList)
         moverList?.adapter = moverRecyclerViewAdapter
@@ -171,60 +188,92 @@ class MoverFragment() : Fragment() {
         refresh?.setRefreshHeader(ClassicsHeader(activity))
         refresh?.setRefreshFooter(
             ClassicsFooter(activity)
-                .setSpinnerStyle(SpinnerStyle.Scale))
+                .setSpinnerStyle(SpinnerStyle.Scale)
+        )
 
         refresh?.setOnRefreshListener {
             dataList.clear()
-            page=1
-            when(tabSelected){
+            page = 1
+            when (tabSelected) {
                 1 -> {
-                    initData("$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                    categoryId = 2
+                    initData(
+                        "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                        tabSelected
+                    )
                 }
                 2 -> {
-                    initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                    categoryId = 1
+                    initData(
+                        "$baseUrl?catid=1&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                        tabSelected
+                    )
                 }
                 3 -> {
-                    initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                    categoryId = 3
+                    initData(
+                        "$baseUrl?catid=3&rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1",
+                        tabSelected
+                    )
                 }
                 4 -> {
-                    initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                    categoryId = 4
+                    initData(
+                        "$baseUrl?catid=4&rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1",
+                        tabSelected
+                    )
                 }
             }
         }
 
         refresh?.setOnLoadMoreListener {
-            when(tabSelected){
+            when (tabSelected) {
                 1 -> {
-                    initData("$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno="+(++page)+"&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                    categoryId = 2
+                    initData(
+                        "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=" + (++page),
+                        tabSelected
+                    )
                 }
                 2 -> {
-                    initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno="+(++page)+"&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                    categoryId = 1
+                    initData(
+                        "$baseUrl?catid=1&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=" + (++page),
+                        tabSelected
+                    )
                 }
                 3 -> {
-                    initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&pageno="+(++page)+"&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                    categoryId = 3
+                    initData(
+                        "$baseUrl?catid=3&rank=rankhot&cat=$cat&area=$area&act=$act&pageno=" + (++page),
+                        tabSelected
+                    )
                 }
                 4 -> {
-                    initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&year=$year&area=$area&pageno="+(++page)+"&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                    categoryId = 4
+                    initData(
+                        "$baseUrl?catid=4&rank=rankhot&cat=$cat&year=$year&area=$area&pageno=" + (++page),
+                        tabSelected
+                    )
                 }
             }
         }
 
         tabMenu?.removeAllTabs()
-        for (i in 0..3){
+        for (i in 0..3) {
             tabMenu?.addTab(tabMenu?.newTab()!!)
             tabMenu?.getTabAt(i)?.setText(strList[i])
         }
 
         tabMenu?.getTabAt(menuSelect)?.select()
 
-        tabMenu?.setOnTabSelectedListener(object : XTabLayout.OnTabSelectedListener{
+        tabMenu?.setOnTabSelectedListener(object : XTabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: XTabLayout.Tab?) {
-                when(tab?.text){
+                when (tab?.text) {
                     "电视剧" -> {
                         tabSelected = 1
-                        baseUrl = AppConfig.pcUrl+"/dianshi"
                         dataList.clear()
-                        page=1
+                        page = 1
                         menuSelect = 0
                         tv?.visibility = View.VISIBLE
                         mv?.visibility = View.GONE
@@ -232,66 +281,78 @@ class MoverFragment() : Fragment() {
                         dv?.visibility = View.GONE
 
                         tvFlag = true
-                        cat = "all"
-                        year = "all"
-                        area = "all"
-                        act = "all"
-                        initData("$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                        cat = ""
+                        year = ""
+                        area = ""
+                        act = ""
+                        categoryId = 2
+                        initData(
+                            "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                            tabSelected
+                        )
                     }
                     "电影" -> {
                         tabSelected = 2
-                        baseUrl = AppConfig.pcUrl+"/dianying"
                         dataList.clear()
-                        page=1
+                        page = 1
                         menuSelect = 1
                         mv?.visibility = View.VISIBLE
                         tv?.visibility = View.GONE
                         zv?.visibility = View.GONE
                         dv?.visibility = View.GONE
                         mvFlag = true
-                        cat = "all"
-                        year = "all"
-                        area = "all"
-                        act = "all"
-                        initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                        cat = ""
+                        year = ""
+                        area = ""
+                        act = ""
+                        categoryId = 1
+                        initData(
+                            "$baseUrl?catid=1&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                            tabSelected
+                        )
                     }
                     "综艺" -> {
                         tabSelected = 3
-                        baseUrl =AppConfig.pcUrl+"/zongyi"
                         dataList.clear()
-                        page=1
+                        page = 1
                         menuSelect = 2
                         zv?.visibility = View.VISIBLE
                         mv?.visibility = View.GONE
                         tv?.visibility = View.GONE
                         dv?.visibility = View.GONE
                         zvFlag = true
-                        cat = "all"
-                        year = "all"
-                        area = "all"
-                        act = "all"
-                        initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                        cat = ""
+                        year = ""
+                        area = ""
+                        act = ""
+                        categoryId = 3
+                        initData(
+                            "$baseUrl?catid=3&rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1",
+                            tabSelected
+                        )
                     }
                     "动漫" -> {
                         tabSelected = 4
-                        baseUrl = AppConfig.pcUrl+"/dongman"
                         dataList.clear()
-                        page=1
+                        page = 1
                         menuSelect = 3
                         dv?.visibility = View.VISIBLE
                         tv?.visibility = View.GONE
                         mv?.visibility = View.GONE
                         zv?.visibility = View.GONE
                         dvFlag = true
-                        cat = "all"
-                        year = "all"
-                        area = "all"
-                        act = "all"
-                        initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                        cat = ""
+                        year = ""
+                        area = ""
+                        act = ""
+                        categoryId = 4
+                        initData(
+                            "$baseUrl?catid=4&rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1",
+                            tabSelected
+                        )
                     }
                 }
             }
-
 
 
             override fun onTabUnselected(tab: XTabLayout.Tab?) {
@@ -306,53 +367,53 @@ class MoverFragment() : Fragment() {
 
 
         filterButton?.setOnClickListener {
-            when(tabSelected){
-                1 ->{
-                    if (tv?.visibility == View.GONE){
+            when (tabSelected) {
+                1 -> {
+                    if (tv?.visibility == View.GONE) {
                         tv?.visibility = View.VISIBLE
                         mv?.visibility = View.GONE
                         zv?.visibility = View.GONE
                         dv?.visibility = View.GONE
-                    }else{
+                    } else {
                         tv?.visibility = View.GONE
                         mv?.visibility = View.GONE
                         zv?.visibility = View.GONE
                         dv?.visibility = View.GONE
                     }
                 }
-                2 ->{
-                    if (mv?.visibility == View.GONE){
+                2 -> {
+                    if (mv?.visibility == View.GONE) {
                         mv?.visibility = View.VISIBLE
                         zv?.visibility = View.GONE
                         dv?.visibility = View.GONE
                         tv?.visibility = View.GONE
-                    }else{
+                    } else {
                         tv?.visibility = View.GONE
                         mv?.visibility = View.GONE
                         zv?.visibility = View.GONE
                         dv?.visibility = View.GONE
                     }
                 }
-                3 ->{
-                    if (zv?.visibility == View.GONE){
+                3 -> {
+                    if (zv?.visibility == View.GONE) {
                         zv?.visibility = View.VISIBLE
                         tv?.visibility = View.GONE
                         mv?.visibility = View.GONE
                         dv?.visibility = View.GONE
-                    }else{
+                    } else {
                         tv?.visibility = View.GONE
                         mv?.visibility = View.GONE
                         zv?.visibility = View.GONE
                         dv?.visibility = View.GONE
                     }
                 }
-                4 ->{
-                    if (dv?.visibility == View.GONE){
+                4 -> {
+                    if (dv?.visibility == View.GONE) {
                         dv?.visibility = View.VISIBLE
                         tv?.visibility = View.GONE
                         mv?.visibility = View.GONE
                         zv?.visibility = View.GONE
-                    }else{
+                    } else {
                         tv?.visibility = View.GONE
                         mv?.visibility = View.GONE
                         zv?.visibility = View.GONE
@@ -365,62 +426,110 @@ class MoverFragment() : Fragment() {
         dataList.clear()
 
         if (isVisibleToUser && isInit) {
-            initData("$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+            when(tabSelected){
+                1->{
+                    initData(
+                        "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                        tabSelected
+                    )
+                }
+                2->{
+                    initData(
+                        "$baseUrl?catid=1&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                        tabSelected
+                    )
+                }
+                3->{
+                    initData(
+                        "$baseUrl?catid=3&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                        tabSelected
+                    )
+                }
+                4->{
+                    initData(
+                        "$baseUrl?catid=4&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
+                        tabSelected
+                    )
+                }
+            }
+
         }
     }
 
-    fun initData(url : String,type : Int){
-        when(type){
+    fun showNetworkOrDataError() {
+        activity?.runOnUiThread {
+            refresh?.finishRefresh(false)
+            refresh?.finishLoadMore(false)
+            AestheticDialog.Builder(requireActivity(), DialogStyle.FLASH, DialogType.ERROR)
+                .setTitle("提示")
+                .setMessage("加载失败！请检查您的网络")
+                .show()
+        }
+    }
+
+    fun showMessage(message: String) {
+        activity?.runOnUiThread {
+            refresh?.finishRefresh(false)
+            refresh?.finishLoadMore(false)
+            AestheticDialog.Builder(requireActivity(), DialogStyle.TOASTER, DialogType.INFO)
+                .setTitle("提示")
+                .setMessage(message)
+                .show()
+        }
+    }
+
+    fun pushJuji(up: Int, max :Int): String {
+        if (up == max) {
+            return "$max 集全"
+        } else {
+            return "更新至$up 集"
+        }
+    }
+
+    fun initData(url: String, type: Int) {
+        when (type) {
             1 -> {
-                Net.get(requireActivity(),url,object :MyCallBack{
+                Net.get(requireActivity(), url, object : MyCallBack {
                     override fun callBack(doc: Document?) {
+                        val data = Gson().fromJson<TvDto>(doc?.body()?.text(), TvDto::class.java)
 
-                        if (doc == null || "".equals(doc.body().text())) {
-                            activity?.runOnUiThread {
-
-                            refresh?.finishRefresh(false)
-                            refresh?.finishLoadMore(false)
-                            AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
-                                .setTitle("提示")
-                                .setMessage("加载失败！请检查您的网络")
-                                .show()
-                            }
+                        if (data.errno != 0) {
+                            showNetworkOrDataError()
+                            return
+                        }else if (data.data == null){
+                            showMessage("加载数据为空哦！")
                             return
                         }
-                        val home = doc.select(".s-tab-main")
-                        val titles = home[0].select(".s1")
-                        val counts = home[0].select(".star")
-                        val juJis = home[0].select(".hint")
-                        val imgs = home[0].getElementsByTag("img")
-                        val urls = home[0].getElementsByTag("a")
-                        var i = 0
-                        for (it in titles){
-                            val title = it.text()
-                            val count = counts[i].text()
-                            val juJi = juJis[i].text()
-                            val img = imgs[i].attr("src")
-                            val url = AppConfig.pcUrl + urls[i].attr("href")
-                            Log.e("url输出：",title)
-                            Log.e("url输出：",count)
-                            Log.e("url输出：",juJi)
-                            Log.e("url输出：",img)
-                            Log.e("url输出：",url)
-                            dataList.add(MoverCount(title, img, count, juJi, url))
-                            i+=1
+
+                        for (it in data.data.movies) {
+                            val title = it.title
+                            val count = it.comment
+                            val juJi = pushJuji(it.upinfo, it.total)
+                            val img = "http:" + it.cdncover
+                            val url = it.id
+                            Log.e("url输出：", title)
+                            Log.e("url输出：", count)
+                            Log.e("url输出：", juJi)
+                            Log.e("url输出：", img)
+                            Log.e("url输出：", url)
+                            dataList.add(MoverCount(title, img, count, juJi, url, categoryId))
                         }
 
-                        if (tvFlag){
+                        if (tvFlag) {
 
                             //初始化分类
-                            val select = doc.select("dd.item")
-                            val select1 = select[1].select("a")
+
                             cats.clear()
-                            cats["全部"] = "all"
-                            for (it in select1){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("cat=")).replace("cat=","")
-                                cats[key] = value
+                            val catJson = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/cat.json"
+                                )
+                            }
+                            if (catJson != null) {
+                                for (it in catJson.data) {
+                                    cats[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -428,9 +537,10 @@ class MoverFragment() : Fragment() {
                                 catid?.setOnClickCategoryListener(object :
                                     CategoryView.OnClickCategoryListener {
                                     override fun click(group: RadioGroup?, checkedId: Int) {
-                                        cat = cats[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
+                                        cat =
+                                            cats[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
                                         initData(
-                                            "$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",
+                                            "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
                                             tabSelected
                                         )
                                         dataList.clear()
@@ -439,14 +549,20 @@ class MoverFragment() : Fragment() {
                             }
 
 
-                            val select2 = select[2].select("a")
+
                             years.clear()
-                            years["全部"] = "all"
-                            for (it in select2){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("year=")).replace("year=","")
-                                years[key] = value
+                            val catJson2 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/year.json"
+                                )
+                            }
+                            if (catJson2 != null) {
+                                for (it in catJson2.data) {
+                                    val key = it.title
+                                    val value = it.id
+                                    years[key] = value
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -457,7 +573,7 @@ class MoverFragment() : Fragment() {
                                         year =
                                             years[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
                                         initData(
-                                            "$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",
+                                            "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
                                             tabSelected
                                         )
                                         dataList.clear()
@@ -465,14 +581,19 @@ class MoverFragment() : Fragment() {
                                 })
                             }
 
-                            val select3 = select[3].select("a")
                             areas.clear()
-                            areas["全部"] = "all"
-                            for (it in select3){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("area=")).replace("area=","")
-                                areas[key] = value
+                            val catJson3 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/area.json"
+                                )
+                            }
+                            if (catJson3 != null) {
+                                for (it in catJson3.data) {
+                                    val key = it.title
+                                    val value = it.id
+                                    areas[key] = value
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -483,7 +604,7 @@ class MoverFragment() : Fragment() {
                                         area =
                                             areas[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
                                         initData(
-                                            "$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",
+                                            "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
                                             tabSelected
                                         )
                                         dataList.clear()
@@ -492,14 +613,19 @@ class MoverFragment() : Fragment() {
                             }
 
 
-                            val select4 = select[4].select("a")
                             acts.clear()
-                            acts["全部"] = "all"
-                            for (it in select4){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("act=")).replace("act=","")
-                                acts[key] = value
+                            val catJson4 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/act.json"
+                                )
+                            }
+                            if (catJson4 != null) {
+                                for (it in catJson4.data) {
+                                    val key = it.title
+                                    val value = it.id
+                                    acts[key] = value
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -510,7 +636,7 @@ class MoverFragment() : Fragment() {
                                         act =
                                             acts[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
                                         initData(
-                                            "$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",
+                                            "$baseUrl?catid=2&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
                                             tabSelected
                                         )
                                         dataList.clear()
@@ -519,10 +645,10 @@ class MoverFragment() : Fragment() {
                             }
 
                             tvFlag = false
-                             cat = "all"
-                             year = "all"
-                             area = "all"
-                             act = "all"
+                            cat = ""
+                            year = ""
+                            area = ""
+                            act = ""
 
                         }
 
@@ -537,78 +663,57 @@ class MoverFragment() : Fragment() {
                     }
 
                     override fun callError() {
-                        activity?.runOnUiThread {
-                            refresh?.finishRefresh(false)
-                            refresh?.finishLoadMore(false)
-                            AestheticDialog.Builder(
-                                activity!!,
-                                DialogStyle.FLASH,
-                                DialogType.ERROR
-                            )
-                                .setTitle("提示")
-                                .setMessage("加载失败！请检查您的网络")
-                                .show()
-                        }
+                        showNetworkOrDataError()
                     }
 
                 })
             }
             2 -> {
 
-                Net.get(requireActivity(),url,object :MyCallBack{
+                Net.get(requireActivity(), url, object : MyCallBack {
 
                     override fun callBack(doc: Document?) {
 
-                        if (doc == null || "".equals(doc.body().text())) {
-                            activity?.runOnUiThread {
-                                refresh?.finishRefresh(false)
-                                refresh?.finishLoadMore(false)
-                                AestheticDialog.Builder(
-                                    activity!!,
-                                    DialogStyle.FLASH,
-                                    DialogType.ERROR
-                                )
-                                    .setTitle("提示")
-                                    .setMessage("加载失败！请检查您的网络")
-                                    .show()
-                            }
+                        val data = Gson().fromJson(doc?.body()?.text(), MoverDto::class.java)
+
+                        if (data.errno != 0) {
+                            showNetworkOrDataError()
+                            return
+                        }else if (data.data == null){
+                            showMessage("加载数据为空哦！")
                             return
                         }
 
-                        val home = doc.select(".s-tab-main")
-                        val titles = home[0].select(".s1")
-                        val counts = home[0].select(".star")
-                        val juJis = home[0].select(".hint")
-                        val imgs = home[0].getElementsByTag("img")
-                        val urls = home[0].getElementsByTag("a")
-                        var i = 0
-                        for (it in titles){
-                            val title = it.text()
-                            val count = counts[i].text()
-                            val juJi = juJis[i].text()
-                            val img = imgs[i].attr("src")
-                            val url = AppConfig.pcUrl + urls[i].attr("href")
-                            Log.e("url输出：",title)
-                            Log.e("url输出：",count)
-                            Log.e("url输出：",juJi)
-                            Log.e("url输出：",img)
-                            Log.e("url输出：",url)
-                            dataList.add(MoverCount(title, img, count, juJi, url))
-                            i+=1
+
+
+                        for (it in data.data.movies) {
+                            val title = it.title
+                            val count = it.comment
+                            val juJi = it.score.toString()
+                            val img = "http:" + it.cdncover
+                            val url = it.id
+                            Log.e("url输出：", title)
+                            Log.e("url输出：", count)
+                            Log.e("url输出：", juJi)
+                            Log.e("url输出：", img)
+                            Log.e("url输出：", url)
+                            dataList.add(MoverCount(title, img, count, juJi, url, categoryId))
                         }
 
-                        if (mvFlag){
+                        if (mvFlag) {
 
                             //初始化分类
-                            val select = doc.select("dd.item")
-                            val select1 = select[1].select("a")
                             cats.clear()
-                            cats["全部"] = "all"
-                            for (it in select1){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("cat=")).replace("cat=","")
-                                cats[key] = value
+                            val catJson = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/catmv.json"
+                                )
+                            }
+                            if (catJson != null) {
+                                for (it in catJson.data) {
+                                    cats[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -616,9 +721,10 @@ class MoverFragment() : Fragment() {
                                 mcatid?.setOnClickCategoryListener(object :
                                     CategoryView.OnClickCategoryListener {
                                     override fun click(group: RadioGroup?, checkedId: Int) {
-                                        cat = cats[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
+                                        cat =
+                                            cats[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
                                         initData(
-                                            "$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",
+                                            "$baseUrl?catid=1&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
                                             tabSelected
                                         )
                                         dataList.clear()
@@ -627,14 +733,17 @@ class MoverFragment() : Fragment() {
                             }
 
 
-                            val select2 = select[2].select("a")
                             years.clear()
-                            years["全部"] = "all"
-                            for (it in select2){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("year=")).replace("year=","")
-                                years[key] = value
+                            val catJson2 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/yearmv.json"
+                                )
+                            }
+                            if (catJson2 != null) {
+                                for (it in catJson2.data) {
+                                    years[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -645,7 +754,7 @@ class MoverFragment() : Fragment() {
                                         year =
                                             years[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
                                         initData(
-                                            "$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",
+                                            "$baseUrl?catid=1&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
                                             tabSelected
                                         )
                                         dataList.clear()
@@ -653,14 +762,17 @@ class MoverFragment() : Fragment() {
                                 })
                             }
 
-                            val select3 = select[3].select("a")
                             areas.clear()
-                            areas["全部"] = "all"
-                            for (it in select3){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("area=")).replace("area=","")
-                                areas[key] = value
+                            val catJson3 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/areamv.json"
+                                )
+                            }
+                            if (catJson3 != null) {
+                                for (it in catJson3.data) {
+                                    areas[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -671,7 +783,7 @@ class MoverFragment() : Fragment() {
                                         area =
                                             areas[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
                                         initData(
-                                            "$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",
+                                            "$baseUrl?catid=1&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
                                             tabSelected
                                         )
                                         dataList.clear()
@@ -680,14 +792,17 @@ class MoverFragment() : Fragment() {
                             }
 
 
-                            val select4 = select[4].select("a")
                             acts.clear()
-                            acts["全部"] = "all"
-                            for (it in select4){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("act=")).replace("act=","")
-                                acts[key] = value
+                            val catJson4 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/actmv.json"
+                                )
+                            }
+                            if (catJson4 != null) {
+                                for (it in catJson4.data) {
+                                    acts[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -698,7 +813,7 @@ class MoverFragment() : Fragment() {
                                         act =
                                             acts[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
                                         initData(
-                                            "$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1&from=dianshi_channel%7Cdianshi_list",
+                                            "$baseUrl?catid=1&rank=rankhot&cat=$cat&area=$area&act=$act&year=$year&pageno=1",
                                             tabSelected
                                         )
                                         dataList.clear()
@@ -707,10 +822,10 @@ class MoverFragment() : Fragment() {
                             }
 
                             mvFlag = false
-                            cat = "all"
-                            year = "all"
-                            area = "all"
-                            act = "all"
+                            cat = ""
+                            year = ""
+                            area = ""
+                            act = ""
 
                         }
 
@@ -724,18 +839,7 @@ class MoverFragment() : Fragment() {
                     }
 
                     override fun callError() {
-                        activity?.runOnUiThread {
-                            refresh?.finishRefresh(false)
-                            refresh?.finishLoadMore(false)
-                            AestheticDialog.Builder(
-                                activity!!,
-                                DialogStyle.FLASH,
-                                DialogType.ERROR
-                            )
-                                .setTitle("提示")
-                                .setMessage("加载失败！请检查您的网络")
-                                .show()
-                        }
+                        showNetworkOrDataError()
                     }
 
                 })
@@ -743,60 +847,49 @@ class MoverFragment() : Fragment() {
             }
             3 -> {
 
-                Net.get(requireActivity(),url,object :MyCallBack{
+                Net.get(requireActivity(), url, object : MyCallBack {
 
                     override fun callBack(doc: Document?) {
 
-                        if (doc == null || "".equals(doc.body().text())) {
-                            activity?.runOnUiThread {
-                                refresh?.finishRefresh(false)
-                                refresh?.finishLoadMore(false)
-                                AestheticDialog.Builder(
-                                    activity!!,
-                                    DialogStyle.FLASH,
-                                    DialogType.ERROR
-                                )
-                                    .setTitle("提示")
-                                    .setMessage("加载失败！请检查您的网络")
-                                    .show()
-                            }
+                        val data = Gson().fromJson(doc?.body()?.text(), ZongYiDto::class.java)
+
+                        if (data.errno != 0) {
+                            showNetworkOrDataError()
+                            return
+                        }else if (data.data == null){
+                            showMessage("加载数据为空哦！")
                             return
                         }
 
-                        val home = doc.select(".s-tab-main")
-                        val titles = home[0].select(".s1")
-                        val counts = home[0].select(".star")
-                        val juJis = home[0].select(".hint")
-                        val imgs = home[0].getElementsByTag("img")
-                        val urls = home[0].getElementsByTag("a")
-                        var i = 0
-                        for (it in titles){
-                            val title = it.text()
-                            val count = counts[i].text()
-                            val juJi = juJis[i].text()
-                            val img = imgs[i].attr("src")
-                            val url = AppConfig.pcUrl + urls[i].attr("href")
-                            Log.e("url输出：",title)
-                            Log.e("url输出：",count)
-                            Log.e("url输出：",juJi)
-                            Log.e("url输出：",img)
-                            Log.e("url输出：",url)
-                            dataList.add(MoverCount(title, img, count, juJi, url))
-                            i+=1
+
+                        for (it in data.data.movies) {
+                            val title = it.title
+                            val count = it.lasttitle
+                            val juJi = it.tag
+                            val img = "http:" + it.cdncover
+                            val url = it.id
+                            Log.e("url输出：", title)
+                            Log.e("url输出：", count)
+                            Log.e("url输出：", juJi)
+                            Log.e("url输出：", img)
+                            Log.e("url输出：", url)
+                            dataList.add(MoverCount(title, img, count, juJi, url, categoryId))
                         }
 
-                        if (zvFlag){
+                        if (zvFlag) {
 
                             //初始化分类
-                            val select = doc.select("dd.item")
-                            val select1 = select[1].select("a")
                             cats.clear()
-                            cats["全部"] = "all"
-                            for (it in select1){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("cat=")).replace("cat=","")
-                                cats[key] = value
+                            val catJson = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/catzongyi.json"
+                                )
+                            }
+                            if (catJson != null) {
+                                for (it in catJson.data) {
+                                    cats[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -804,21 +897,28 @@ class MoverFragment() : Fragment() {
                                 zcatid?.setOnClickCategoryListener(object :
                                     CategoryView.OnClickCategoryListener {
                                     override fun click(group: RadioGroup?, checkedId: Int) {
-                                        cat = cats[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
-                                        initData("$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                                        cat =
+                                            cats[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
+                                        initData(
+                                            "$baseUrl?catid=3&rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1",
+                                            tabSelected
+                                        )
                                         dataList.clear()
                                     }
                                 })
                             }
 
-                            val select4 = select[2].select("a")
                             acts.clear()
-                            acts["全部"] = "all"
-                            for (it in select4){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("act=")).replace("act=","")
-                                acts[key] = value
+                            val catJson2 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/actzongyi.json"
+                                )
+                            }
+                            if (catJson2 != null) {
+                                for (it in catJson2.data) {
+                                    acts[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -828,21 +928,27 @@ class MoverFragment() : Fragment() {
                                     override fun click(group: RadioGroup?, checkedId: Int) {
                                         act =
                                             acts[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
-                                        initData("$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                                        initData(
+                                            "$baseUrl?catid=3&rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1",
+                                            tabSelected
+                                        )
                                         dataList.clear()
                                     }
                                 })
                             }
 
 
-                            val select3 = select[3].select("a")
                             areas.clear()
-                            areas["全部"] = "all"
-                            for (it in select3){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("area=")).replace("area=","")
-                                areas[key] = value
+                            val catJson3 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/areazongyi.json"
+                                )
+                            }
+                            if (catJson3 != null) {
+                                for (it in catJson3.data) {
+                                    areas[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -852,17 +958,20 @@ class MoverFragment() : Fragment() {
                                     override fun click(group: RadioGroup?, checkedId: Int) {
                                         area =
                                             areas[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
-                                        initData("$baseUrl/list.php?rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                                        initData(
+                                            "$baseUrl?catid=3&rank=rankhot&cat=$cat&area=$area&act=$act&pageno=1",
+                                            tabSelected
+                                        )
                                         dataList.clear()
                                     }
                                 })
                             }
 
                             zvFlag = false
-                            cat = "all"
-                            year = "all"
-                            area = "all"
-                            act = "all"
+                            cat = ""
+                            year = ""
+                            area = ""
+                            act = ""
 
                         }
 
@@ -877,18 +986,7 @@ class MoverFragment() : Fragment() {
                     }
 
                     override fun callError() {
-                        activity?.runOnUiThread {
-                            refresh?.finishRefresh(false)
-                            refresh?.finishLoadMore(false)
-                            AestheticDialog.Builder(
-                                activity!!,
-                                DialogStyle.FLASH,
-                                DialogType.ERROR
-                            )
-                                .setTitle("提示")
-                                .setMessage("加载失败！请检查您的网络")
-                                .show()
-                        }
+                        showNetworkOrDataError()
                     }
 
 
@@ -897,61 +995,50 @@ class MoverFragment() : Fragment() {
             }
             4 -> {
 
-                Net.get(requireActivity(),url,object :MyCallBack{
+                Net.get(requireActivity(), url, object : MyCallBack {
 
                     override fun callBack(doc: Document?) {
 
-                        if (doc == null || "".equals(doc.body().text())) {
-                            activity?.runOnUiThread {
-                                refresh?.finishRefresh(false)
-                                refresh?.finishLoadMore(false)
-                                AestheticDialog.Builder(
-                                    activity!!,
-                                    DialogStyle.FLASH,
-                                    DialogType.ERROR
-                                )
-                                    .setTitle("提示")
-                                    .setMessage("加载失败！请检查您的网络")
-                                    .show()
-                            }
+                        val data = Gson().fromJson(doc?.body()?.text(), DongManDto::class.java)
+
+                        if (data.errno != 0) {
+                            showNetworkOrDataError()
+                            return
+                        }else if (data.data == null){
+                            showMessage("加载数据为空哦！")
                             return
                         }
 
-                        val home = doc.select(".s-tab-main")
-                        val titles = home[0].select(".s1")
-                        val counts = home[0].select(".star")
-                        val juJis = home[0].select(".hint")
-                        val imgs = home[0].getElementsByTag("img")
-                        val urls = home[0].getElementsByTag("a")
-                        var i = 0
-                        for (it in titles){
-                            val title = it.text()
-                            val count = ""
-                            val juJi = juJis[i].text()
-                            val img = imgs[i].attr("src")
-                            val url = AppConfig.pcUrl + urls[i].attr("href")
-                            Log.e("url输出：",title)
-                            Log.e("url输出：",count)
-                            Log.e("url输出：",juJi)
-                            Log.e("url输出：",img)
-                            Log.e("url输出：",url)
-                            dataList.add(MoverCount(title, img, count, juJi, url))
-                            i+=1
+
+                        for (it in data.data.movies) {
+                            val title = it.title
+                            val count = it.comment
+                            val juJi = pushJuji(it.upinfo, it.total)
+                            val img = "http:" + it.cdncover
+                            val url = it.id
+                            Log.e("url输出：", title)
+                            Log.e("url输出：", count)
+                            Log.e("url输出：", juJi)
+                            Log.e("url输出：", img)
+                            Log.e("url输出：", url)
+                            dataList.add(MoverCount(title, img, count, juJi, url, categoryId))
                         }
 
 
-                        if (dvFlag){
+                        if (dvFlag) {
 
                             //初始化分类
-                            val select = doc.select("dd.item")
-                            val select1 = select[1].select("a")
                             cats.clear()
-                            cats["全部"] = "all"
-                            for (it in select1){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("cat=")).replace("cat=","")
-                                cats[key] = value
+                            val catJson = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/catdongman.json"
+                                )
+                            }
+                            if (catJson != null) {
+                                for (it in catJson.data) {
+                                    cats[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -959,21 +1046,28 @@ class MoverFragment() : Fragment() {
                                 dcatid?.setOnClickCategoryListener(object :
                                     CategoryView.OnClickCategoryListener {
                                     override fun click(group: RadioGroup?, checkedId: Int) {
-                                        cat = cats[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
-                                        initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                                        cat =
+                                            cats[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
+                                        initData(
+                                            "$baseUrl?catid=4&rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1",
+                                            tabSelected
+                                        )
                                         dataList.clear()
                                     }
                                 })
                             }
 
-                            val select4 = select[2].select("a")
                             years.clear()
-                            years["全部"] = "all"
-                            for (it in select4){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("year=")).replace("year=","")
-                                years[key] = value
+                            val catJson2 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/yeardongman.json"
+                                )
+                            }
+                            if (catJson2 != null) {
+                                for (it in catJson2.data) {
+                                    years[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -983,21 +1077,27 @@ class MoverFragment() : Fragment() {
                                     override fun click(group: RadioGroup?, checkedId: Int) {
                                         year =
                                             years[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
-                                        initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                                        initData(
+                                            "$baseUrl?catid=4&rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1",
+                                            tabSelected
+                                        )
                                         dataList.clear()
                                     }
                                 })
                             }
 
 
-                            val select3 = select[3].select("a")
                             areas.clear()
-                            areas["全部"] = "all"
-                            for (it in select3){
-                                val key = it.text()
-                                val href = it.attr("href")
-                                val value = href.substring(href.indexOf("area=")).replace("area=","")
-                                areas[key] = value
+                            val catJson3 = activity?.let {
+                                JsonFileUtil.readJsonToAutoType(
+                                    it,
+                                    "json/areadongman.json"
+                                )
+                            }
+                            if (catJson3 != null) {
+                                for (it in catJson3.data) {
+                                    areas[it.title] = it.id
+                                }
                             }
 
                             activity?.runOnUiThread {
@@ -1007,17 +1107,20 @@ class MoverFragment() : Fragment() {
                                     override fun click(group: RadioGroup?, checkedId: Int) {
                                         area =
                                             areas[group?.findViewById<RadioButton>(checkedId)?.text.toString()].toString()
-                                        initData(baseUrl+"/list.php?rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1&from=dianshi_channel%7Cdianshi_list",tabSelected)
+                                        initData(
+                                            "$baseUrl?catid=4&rank=rankhot&cat=$cat&year=$year&area=$area&pageno=1",
+                                            tabSelected
+                                        )
                                         dataList.clear()
                                     }
                                 })
                             }
 
                             dvFlag = false
-                            cat = "all"
-                            year = "all"
-                            area = "all"
-                            act = "all"
+                            cat = ""
+                            year = ""
+                            area = ""
+                            act = ""
 
                         }
 
@@ -1032,17 +1135,7 @@ class MoverFragment() : Fragment() {
                     }
 
                     override fun callError() {
-                        activity?.runOnUiThread {
-                            refresh?.finishRefresh(false)
-                            AestheticDialog.Builder(
-                                activity!!,
-                                DialogStyle.FLASH,
-                                DialogType.ERROR
-                            )
-                                .setTitle("提示")
-                                .setMessage("加载失败！请检查您的网络")
-                                .show()
-                        }
+                        showNetworkOrDataError()
                     }
 
                 })

@@ -63,12 +63,7 @@ class DramaRecyclerViewAdapter(val context: Context, data: List<Drama>,val isPlu
             notifyDataSetChanged()
 
             Play.nowDrama = dataList.get(position).url
-            if (Play.nowDrama.indexOf("360kan.com") != -1) {
-                val play = context as Play
-                play.playDirectByJuji(Play.nowDrama, position)
-            }else {
-                web.loadUrl(Play.nowLine + Play.nowDrama)
-            }
+            web.loadUrl(Play.nowLine + Play.nowDrama)
 
         }
     }

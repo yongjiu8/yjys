@@ -1,13 +1,19 @@
 package com.example.yjys
 
 import android.app.Activity
+import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
+import android.webkit.URLUtil
 import android.widget.Toast
 import com.example.yjys.adapter.ScannerGridViewAdapter
+import com.example.yjys.config.AppConfig
+import com.example.yjys.entity.HomeBannerDto
 import com.example.yjys.entity.MoverCount
+import com.example.yjys.entity.SearchDto
 import com.example.yjys.utils.MyCallBack
 import com.example.yjys.utils.Net
+import com.google.gson.Gson
 import com.thecode.aestheticdialogs.AestheticDialog
 import com.thecode.aestheticdialogs.DialogStyle
 import com.thecode.aestheticdialogs.DialogType
@@ -59,26 +65,47 @@ class Scanner : BaseActivity() {
 
     }
 
+    fun showNetworkOrDataError() {
+        activity?.runOnUiThread {
+            AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
+                .setTitle("提示")
+                .setMessage("加载失败！请检查您的网络")
+                .show()
+        }
+    }
+
+    fun showMessage(message: String) {
+        activity?.runOnUiThread {
+            AestheticDialog.Builder(activity!!, DialogStyle.TOASTER, DialogType.INFO)
+                .setTitle("提示")
+                .setMessage(message)
+                .show()
+        }
+    }
+
    fun initData(){
        listData.clear()
-       Net.get(activity!!,"https://so.360kan.com/index.php?kw=" + scan_edit.text,object : MyCallBack{
+       Net.get(activity!!,AppConfig.searchUrl + "&kw=" + Uri.encode(scan_edit.text.toString()), object : MyCallBack{
            override fun callBack(doc: Document?) {
-               if (doc == null || "".equals(doc.body().text())) {
-                   activity?.runOnUiThread {
-                       AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
-                           .setTitle("提示")
-                           .setMessage("加载失败！请检查您的网络")
-                           .show()
-                   }
+               var data: SearchDto?
+               try {
+                   data = Gson().fromJson(doc?.body()?.text(), SearchDto::class.java)
+               }catch (e: java.lang.Exception){
+                   showMessage("数据跑外太空去了！")
                    return
                }
 
-               val select = doc.select(".m-mainpic")
-               for (it in select){
-                   val title = it.getElementsByTag("a")[0].attr("title")
-                   val url = it.getElementsByTag("a")[0].attr("href")
-                   val img = it.getElementsByTag("img")[0].attr("src")
-                   listData.add(MoverCount(title,img,"","",url))
+               if (data.code != 0) {
+                   showNetworkOrDataError()
+                   return
+               } else if (data.data == null) {
+                   showMessage("加载数据为空哦！")
+                   return
+               }
+
+
+               for (it in data.data.longData.rows){
+                   listData.add(MoverCount(it.titleTxt,it.cover,it.description,it.catName,it.enId, it.catId.toInt()))
                }
 
                activity?.runOnUiThread {
@@ -88,12 +115,7 @@ class Scanner : BaseActivity() {
            }
 
            override fun callError() {
-               activity?.runOnUiThread {
-                   AestheticDialog.Builder(activity!!, DialogStyle.FLASH, DialogType.ERROR)
-                       .setTitle("提示")
-                       .setMessage("加载失败！请检查您的网络")
-                       .show()
-               }
+               showNetworkOrDataError()
            }
        })
 

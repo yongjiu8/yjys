@@ -3,6 +3,8 @@ package com.example.yjys.utils
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.webkit.WebChromeClient
+import android.webkit.WebViewClient
 import com.example.yjys.BaseActivity
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -20,11 +22,13 @@ class Net(){
                 var body : Document? = null
                 try {
                     BaseActivity.loading(activity)
+
                     body = Jsoup.connect(url).ignoreContentType(true).timeout(8000).get()
                     callBack.callBack(body)
                 }catch (e : Exception){
                     callBack.callError()
-                    Log.e("网络请求异常：", e.stackTraceToString())
+                    e.printStackTrace()
+                    Log.e("网络请求异常：", e.toString())
                 }finally {
                     BaseActivity.closeLoading(activity)
                 }
@@ -41,7 +45,7 @@ class Net(){
                     callBack.callBack(body)
                 }catch (e : Exception){
                     callBack.callError()
-                    Log.e("网络请求异常：", e.stackTraceToString())
+                    Log.e("网络请求异常：", e.toString())
                 }finally {
                     BaseActivity.closeLoading(activity)
                 }
@@ -58,7 +62,7 @@ class Net(){
                     callBack.callBack(body)
                 }catch (e : Exception){
                     callBack.callError()
-                    Log.e("网络请求异常：", e.stackTraceToString())
+                    Log.e("网络请求异常：", e.toString())
                 }finally {
                     BaseActivity.closeLoading(activity)
                 }

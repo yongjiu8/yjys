@@ -60,6 +60,7 @@ class ScannerGridViewAdapter(val context: Context, data1: List<MoverCount>) : Ba
                 intent.putExtra("url",data.get(position).url)
                 intent.putExtra("title",data.get(position).title)
                 intent.putExtra("img",data.get(position).img)
+                intent.putExtra("type",data.get(position).type)
                 val activity = context as Activity
                 activity.startActivity(intent)
             }

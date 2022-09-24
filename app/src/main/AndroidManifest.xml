@@ -46,12 +46,12 @@
 
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
-        <activity android:name="com.example.yjys.faxianui.MusicScanerActivity" />
-        <activity android:name="com.example.yjys.faxianui.MusicPlayActivity" />
-        <activity android:name="com.example.yjys.faxianui.MusicActivity" />
-        <activity android:name="com.example.yjys.History" />
-        <activity android:name="com.example.yjys.Favorites" />
-        <activity android:name="com.example.yjys.TianQi" />
+        <activity android:name="com.example.yjys.faxianui.MusicScanerActivity" android:exported="true"/>
+        <activity android:name="com.example.yjys.faxianui.MusicPlayActivity" android:exported="true"/>
+        <activity android:name="com.example.yjys.faxianui.MusicActivity" android:exported="true"/>
+        <activity android:name="com.example.yjys.History" android:exported="true"/>
+        <activity android:name="com.example.yjys.Favorites" android:exported="true"/>
+        <activity android:name="com.example.yjys.TianQi" android:exported="true"/>
 
         <meta-data
             android:name="android.notch_support"
@@ -64,7 +64,7 @@
         <activity
             android:name="com.example.yjys.Scanner"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity android:name="com.example.yjys.LoginActivity">
+        <activity android:name="com.example.yjys.LoginActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -73,8 +73,8 @@
         </activity>
         <activity
             android:name="com.example.yjys.Play"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity android:name="com.example.yjys.MainActivity" />
+            android:configChanges="orientation|screenSize|keyboardHidden" android:exported="true"/>
+        <activity android:name="com.example.yjys.MainActivity" android:exported="true"/>
 
         <service
             android:name="com.tencent.smtt.export.external.DexClassLoaderProviderService"
@@ -85,7 +85,8 @@
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -99,16 +100,17 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="behind"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="true"/>
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent" />
+            android:theme="@android:style/Theme.Translucent"
+            android:exported="true"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.yjys.fileProvider"
-            android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"

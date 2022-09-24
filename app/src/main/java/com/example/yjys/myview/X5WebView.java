@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.example.yjys.application.Application;
+import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
@@ -18,6 +19,9 @@ public class X5WebView extends WebView {
          * 防止加载网页时调起系统浏览器
          */
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (url.indexOf("hap://") != -1){
+                return true;
+            }
             view.loadUrl(url);
             return true;
         }
@@ -35,17 +39,10 @@ public class X5WebView extends WebView {
             webView.measure(w, h);
         }
 
-        /*@Override
+        @Override
         public WebResourceResponse shouldInterceptRequest(WebView webView, String s) {
-            *//*for (String it : AppConfig.getCaoList()){
-                if (s.indexOf(it)!=-1){
-                    return new WebResourceResponse(null,null,null);
-                }
-            }*//*
-
             return super.shouldInterceptRequest(webView, s);
-
-        }*/
+        }
 
     };
 

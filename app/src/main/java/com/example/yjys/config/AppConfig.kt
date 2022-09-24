@@ -7,9 +7,27 @@ class AppConfig {
 
     companion object{
         @JvmStatic
-        val mobileUrl : String = "http://m.360kan.com/"
+        val homeBannerUrl = "https://api.web.360kan.com/v1/block?blockid=522"
+
         @JvmStatic
-        val pcUrl : String = "https://www.360kan.com"
+        val homeTvUrl = "https://api.web.360kan.com/v1/block?blockid=131&size=9"
+
+        @JvmStatic
+        val homeMoverUrl = "https://api.web.360kan.com/v1/block?blockid=90&size=9"
+
+        @JvmStatic
+        val homeZongYiUrl = "https://api.web.360kan.com/v1/block?blockid=43&size=9"
+
+        @JvmStatic
+        val homeDongManUrl = "https://api.web.360kan.com/v1/block?blockid=72&size=9"
+
+        @JvmStatic
+        val homeShaoErUrl = "https://api.web.360kan.com/v1/block?blockid=25&size=9"
+
+        @JvmStatic
+        val searchUrl : String = "https://api.so.360kan.com/index?force_v=1&from=&pageno=1&v_ap=1&tab=all"
+        @JvmStatic
+        val pcUrl : String = "https://api.web.360kan.com"
         @JvmStatic
         var playUrl : String = "http://17kyun.com/api.php?url="
         @JvmStatic
