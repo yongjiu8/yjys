@@ -19,10 +19,9 @@ public class X5WebView extends WebView {
          * 防止加载网页时调起系统浏览器
          */
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if (url.indexOf("hap://") != -1){
-                return true;
+            if (url.contains("http://") || url.contains("https://")){
+                view.loadUrl(url);
             }
-            view.loadUrl(url);
             return true;
         }
 
@@ -86,8 +85,7 @@ public class X5WebView extends WebView {
         webSetting.setPluginState(WebSettings.PluginState.ON_DEMAND);
         webSetting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);// 不使用cache 全部从网络上获取
         webSetting.setLoadsImagesAutomatically(true);  //支持自动加载图片
-         //webSetting.setrenderpriority(WebSettings.RenderPriority.HIGH);
-        // webSetting.setPageCacheCapacity(IX5WebSettings.DEFAULT_CACHE_CAPACITY);
+        webSetting.setUserAgent("Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Mobile Safari/537.36");
 
         String appCachePath = Application.getInstance().getCacheDir().getAbsolutePath();
         webSetting.setAppCachePath(appCachePath);

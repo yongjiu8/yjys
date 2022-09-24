@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "title": "全部",
+      "id": ""
+    },
+    {
+      "title": "内地",
+      "id": "大陆"
+    },
+    {
+      "title": "中国香港",
+      "id": "香港"
+    },
+    {
+      "title": "中国台湾",
+      "id": "台湾"
+    },
+    {
+      "title": "日本",
+      "id": "日本"
+    },
+    {
+      "title": "欧美",
+      "id": "欧美"
+    }
+  ],
+  "iteratorEvents": [
+    "click"
+  ],
+  "label": "地区",
+  "name": "area",
+  "defaultId": ""
+}

@@ -31,8 +31,8 @@ android {
         applicationId "com.example.yjys"
         minSdkVersion 17
         targetSdkVersion 33
-        versionCode 20220924
-        versionName "2.6"
+        versionCode 20220925
+        versionName "2.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
